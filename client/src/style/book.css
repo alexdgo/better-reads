@@ -1,0 +1,12 @@
+.label {
+	font-weight: bold;
+}
+
+.title {
+	font-family: 'Times New Roman', Times, serif;
+	font-weight: regular;
+}
+
+html {
+	font-weight: light;
+}

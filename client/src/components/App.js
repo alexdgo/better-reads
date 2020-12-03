@@ -5,6 +5,8 @@ import {
 	Switch
 } from 'react-router-dom';
 import Book from './Book';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default class App extends React.Component {
 

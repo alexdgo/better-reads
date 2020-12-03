@@ -8,24 +8,21 @@ var connection = mysql.createPool(config);
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
 
-
-/* ---- Q1a (Dashboard) ---- 
-function getAllGenres(req, res) {
-  var query = `SELECT DISTINCT genre FROM Genres;`
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err)
-    else {
-      res.json(rows)
-    }
-  })
-};
-*/
+function getBook(req, res) {
+  var isbn = req.params.isbn;
+  res.json({
+    isbn: 9780439358071,
+    title: "Harry Potter and the Order of the Phoenix",
+    author: "J.K. Rowling", 
+    language: "eng",
+    num_pages: 870,
+    publisher: "Scholastic Inc.",
+    year_published: 2004, 
+    cover: "http://images.amazon.com/images/P/0439358078.01.LZZZZZZZ.jpg"
+  });
+}
 
 // The exported functions, which can be accessed in index.js.
 module.exports = {
-	getAllGenres: getAllGenres,
-	getTopInGenre: getTopInGenre,
-	getRecs: getRecs,
-	getDecades: getDecades,
-  bestGenresPerDecade: bestGenresPerDecade
+		getBook: getBook,
 }

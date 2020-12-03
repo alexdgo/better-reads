@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 /* ------------------- Route handler registration ----------------- */
 /* ---------------------------------------------------------------- */
 
+app.get('/books/:isbn', routes.getBook);
 
 
 
