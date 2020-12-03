@@ -14,8 +14,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 /* ---------------------------------------------------------------- */
 
 app.get('/books/:isbn', routes.getBook);
-
-
+app.get('/getRating/:isbn', routes.getAvgRating);
+app.get('/addToList/:isbn/:user', routes.addToReadingList);
 
 
 app.listen(8081, () => {

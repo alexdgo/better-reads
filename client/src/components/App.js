@@ -17,7 +17,7 @@ export default class App extends React.Component {
 					<Switch>
 						<Route
 							exact
-							path="/book"
+							path="/book/:isbn"
 							render={() => (
 								<Book />
 							)}
