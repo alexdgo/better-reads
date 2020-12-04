@@ -14,6 +14,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 /* ---------------------------------------------------------------- */
 
 
+app.get('/search/all/:query', routes.searchAll)
+app.get('/search/books/:query', routes.searchBooks)
+app.get('/search/authors/:query', routes.searchAuthors)
 
 
 
