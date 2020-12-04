@@ -5,6 +5,7 @@ import {
 	Switch
 } from 'react-router-dom';
 import Book from './Book';
+import Home from './Home';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -15,6 +16,13 @@ export default class App extends React.Component {
 			<div className="App">
 				<Router>
 					<Switch>
+						<Route
+							exact
+							path="/"
+							render={() => (
+								<Home />
+							)}
+						/>
 						<Route
 							exact
 							path="/book/:isbn"
