@@ -32,3 +32,11 @@
 .movies-header .header, .movie .rating, .movie .votes {
   flex: 1 0 25%;
 }
+
+
+/* Style the search box inside the navigation bar */
+.input-container input[type=text] {
+  float: right;
+  padding: 6px;
+  border: none;
+}

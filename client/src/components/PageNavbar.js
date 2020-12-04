@@ -6,6 +6,7 @@ export default class PageNavbar extends React.Component {
 		super(props);
 
 		this.state = {
+			bookName: "",
 			navDivs: []
 		}
 	}
@@ -43,6 +44,9 @@ export default class PageNavbar extends React.Component {
 			      <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
 			        <div className="navbar-nav">
 			        {this.state.navDivs}
+					<div className="input-container">
+						<input type='text' placeholder="Enter Book Name" />
+			    	</div>
 			        </div>
 			      </div>
 			    </nav>
