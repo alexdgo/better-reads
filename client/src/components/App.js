@@ -6,6 +6,9 @@ import {
 } from 'react-router-dom';
 import Book from './Book';
 import SearchResult from './SearchResult'
+import Home from './Home';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export const BookContext = createContext()
 
@@ -18,7 +21,15 @@ function App() {
 				<Router>
 					<Switch>
 						<Route
-							exact path="/book"
+							exact
+							path="/"
+							render={() => (
+								<Home />
+							)}
+						/>
+						<Route
+							exact
+							path="/book/:isbn"
 							render={() => (
 								<Book />
 							)}
