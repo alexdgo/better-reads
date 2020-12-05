@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { BookContext } from './App'
+import { Link } from 'react-router-dom'
 import { ResultWrapper, Overlay, ResultBlock, BookCard } from '../style/SearchStyle'
 
 
@@ -12,9 +13,9 @@ const SearchResult = () => {
       <ResultBlock>
         <span class="close" onClick = {() => setShowResult(false)}>&times;</span>
         {queryResult.map(d => (
-          <div>
+          <Link to={`/book/${d.isbn}`}>
             <BookCard {...d}/>
-          </div>
+          </Link>
         ))}
       </ResultBlock>
     </ResultWrapper>
