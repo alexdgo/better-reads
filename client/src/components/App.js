@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Book from "./Book";
 import SearchResult from "./SearchResult";
 import Home from "./Home";
+import Login from "../Login";
+import Profile from "../Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export const BookContext = createContext();
@@ -17,7 +19,9 @@ function App() {
       <div className="App">
         <Router>
           <Switch>
-            <Route exact path="/" render={() => <Home />} />
+            <Route exact path="/" render={() => <Login />} />
+            <Route exact path="/profile" render={() => <Profile />} />
+            <Route exact path="/home" render={() => <Home />} />
             <Route exact path="/book/:isbn" render={() => <Book />} />
             <Route exact path="/SearchResult" render={() => <SearchResult />} />
           </Switch>
