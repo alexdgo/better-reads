@@ -6,6 +6,8 @@ import Home from "./Home";
 import Login from "../Login";
 import Profile from "../Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
+import SearchBar from "./SearchBar";
+import PageNavbar from "./PageNavbar";
 
 export const BookContext = createContext();
 
@@ -17,6 +19,7 @@ function App() {
       value={{ queryResult, setQueryResult, showResult, setShowResult }}
     >
       <div className="App">
+        <PageNavbar/>
         <Router>
           <Switch>
             <Route exact path="/" render={() => <Login />} />

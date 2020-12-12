@@ -4,6 +4,10 @@ import {Container, Row, Col, Media, Button, Card} from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
 import '../style/book.css';
+import { BookCard } from '../style/SearchStyle'
+import { Link } from 'react-router-dom'
+
+
 
 // TODO: book recs
 // TODO: check if user has previous rating
@@ -14,17 +18,8 @@ class Book extends React.Component {
         const isbn = this.props.match.params.isbn;
         this.state = {
             isbn: isbn,
-            // title: null,
-            // author: "", 
-            // language: "",
-            // num_pages: 0,
-            // publisher: "",
-            // year_published: 0, 
-            // cover: "",
-            // genre: null,
-            // format: "",
-            // price: 0, 
-            // rating: null
+            authorRecs: [],
+            genreRecs: []
         }
 
         this.addRating = this.addRating.bind(this);
@@ -34,6 +29,8 @@ class Book extends React.Component {
     componentDidMount() {
         this.getBook();
         this.getRating();
+        this.getAuthorRec();
+        this.getGenreRec();
     }
     
     getBook() {
@@ -87,11 +84,46 @@ class Book extends React.Component {
 			})
 			.catch((err) => console.log(err));
     }
+
+    getAuthorRec() {
+        fetch('http://localhost:8081/authorRec/' + this.state.isbn, {
+			method: 'GET',
+		})
+			.then((res) => res.json())
+			.then((books) => {
+				if (!books) return;
+				const recs = books.map(b => (
+                    <Link key={b.isbn} to={`/book/${b.isbn}`}>
+                        <BookCard  {...b}/>
+                    </Link>
+                ));
+                this.setState({authorRecs: recs})
+			})
+			.catch((err) => console.log(err));
+    }
+
+    getGenreRec() {
+        fetch('http://localhost:8081/genreRec/' + this.state.isbn, {
+			method: 'GET',
+		})
+			.then((res) => res.json())
+			.then((books) => {
+                if (!books) return;
+                console.log(books);
+				const recs = books.map(b => (
+                    <Link key={b.isbn} to={`/book/${b.isbn}`}>
+                        <BookCard  {...b}/>
+                    </Link>
+                ));
+                this.setState({genreRecs: recs})
+			})
+			.catch((err) => console.log(err));
+    }
     
     render() {
         return (
             <div>
-            <SearchBar/>
+            {/* <SearchBar/> */}
             <Container className="justify-content-center p-3">
                 <Media className="align-items-center justify-content-center">
                     <img 
@@ -109,6 +141,7 @@ class Book extends React.Component {
                                 value={this.state.rating}
                                 isHalf={true}
                                 size={24}
+                                edit={false}
                             />
                         }
                         <Card className="userInfo flex-column mt-3 p-2 px-5 align-items-center">
@@ -176,7 +209,16 @@ class Book extends React.Component {
                         }
                     </Card.Body>
                 </Card>
-            {/* </Row> */}
+            <Card className="rec">
+                <Card.Body>
+                    <h5><b>YOU MAY ALSO LIKE</b></h5>
+                    Based Off Author
+                        {this.state.authorRecs}
+                    Based Off Genre
+                        {this.state.genreRecs}
+
+                </Card.Body>
+            </Card>
             </Container>
 
             </div>

@@ -16,6 +16,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get("/books/:isbn", routes.getBook);
 app.get("/getRating/:isbn", routes.getAvgRating);
 app.get("/addToList/:isbn/:user", routes.addToReadingList);
+app.get("/authorRec/:isbn", routes.getAuthorRec);
+app.get("/genreRec/:isbn", routes.getGenreRec);
 
 app.get("/search/all/:query", routes.searchAll);
 app.get("/search/books/:query", routes.searchBooks);

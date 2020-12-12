@@ -86,16 +86,7 @@ const searchAuthors = (req, res) => {
 
 function getBook(req, res) {
   var isbn = req.params.isbn;
-  // res.json({
-  //   isbn: 9780439358071,
-  //   title: "Harry Potter and the Order of the Phoenix",
-  //   author: "J.K. Rowling",
-  //   language: "eng",
-  //   num_pages: 870,
-  //   publisher: "Scholastic Inc.",
-  //   year_published: 2004,
-  //   cover: "http://images.amazon.com/images/P/0439358078.01.LZZZZZZZ.jpg"
-  // });
+
   res.json({
     isbn: 9780345453747,
     title: "The Ultimate Hitchhiker's Guide to the Galaxy",
@@ -109,6 +100,67 @@ function getBook(req, res) {
     genre: "Science-Fiction-Fantasy-Horror",
     price: 16.82,
   });
+}
+
+function getAuthorRec(req, res) {
+  var isbn = req.params.isbn;
+  res.json([{
+    isbn: 9780345453747, 
+    title: "Last Chance to See",
+    author: "Douglas Adams",
+    language: "eng",
+    num_pages: 815,
+    publisher: "Del Rey Books",
+    year_published: 1992,
+    cover: "http://images.amazon.com/images/P/0345371984.01.LZZZZZZZ.jpg",
+    format: "Hardback",
+    genre: "Dictionaries-Languages",
+    price: 16,
+  }]);
+
+//   WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+// SELECT Book.title, Rate.avg_rating 
+// FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+// WHERE Book.author IN 
+// (SELECT author FROM Book WHERE isbn = A)
+// ORDER BY Rate.avg_rating DESC;
+
+}
+
+function getGenreRec(req, res) {
+  var isbn = req.params.isbn;
+
+  res.json([{
+    isbn: 9780439358070,
+    title: "Harry Potter and the Philosopher's Stone",
+    author: "J.K. Rowling",
+    language: "eng",
+    num_pages: 870,
+    publisher: "Scholastic Inc.",
+    year_published: 2004,
+    genre: "Science-Fiction-Fantasy-Horror",
+    cover: "https://d1w7fb2mkkr3kw.cloudfront.net/assets/images/book/mid/9781/4088/9781408855652.jpg"
+  }, 
+  {
+    isbn: 9780439358071,
+    title: "Harry Potter and the Order of the Phoenix",
+    author: "J.K. Rowling",
+    language: "eng",
+    num_pages: 870,
+    publisher: "Scholastic Inc.",
+    year_published: 2005,
+    genre: "Science-Fiction-Fantasy-Horror",
+    cover: "http://images.amazon.com/images/P/0439358078.01.LZZZZZZZ.jpg"
+  }
+  ]);
+
+
+// WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+// SELECT Book.title, Rate.avg_rating 
+// FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+// WHERE genre IN (SELECT genre FROM Book WHERE isbn = A)
+// ORDER BY Rate.avg_rating DESC;
+
 }
 
 function addToReadingList(req, res) {
@@ -264,4 +316,6 @@ module.exports = {
   getAvgRating: getAvgRating,
   getAllGenres: getAllGenres,
   getTopInGenre: getTopInGenre,
+  getAuthorRec: getAuthorRec,
+  getGenreRec: getGenreRec
 };
