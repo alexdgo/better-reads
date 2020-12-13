@@ -19,16 +19,23 @@ class Book extends React.Component {
         this.state = {
             isbn: isbn,
             authorRecs: [],
-            genreRecs: []
+            genreRecs: [], 
+            userRating: 0,
         }
 
         this.addRating = this.addRating.bind(this);
         this.addToList = this.addToList.bind(this);
+        this.getUserRating = this.getUserRating.bind(this);
+        this.getAuthorRec = this.getAuthorRec.bind(this);
+        this.render = this.render.bind(this);
+        this.user = 1; 
+
     }
 
     componentDidMount() {
         this.getBook();
         this.getRating();
+        this.getUserRating();
         this.getAuthorRec();
         this.getGenreRec();
     }
@@ -59,9 +66,31 @@ class Book extends React.Component {
 			.catch((err) => console.log(err));
     }
 
+    getUserRating() {
+        fetch(`http://localhost:8081/getUserRating/${this.state.isbn}/${this.user}`, {
+			method: 'GET',
+		})
+			.then((res) => res.json())
+			.then((userRating) => {
+                if (!userRating) return;
+                
+                var stars = <ReactStars 
+                    count={5}
+                    value={userRating.rating}
+                    isHalf={true}
+                    size={24}
+                    activeColor={"#ff0019"}
+                    onChange={this.addRating}
+                />;
+
+                this.setState({userRating : stars});
+			})
+			.catch((err) => console.log(err));
+    }
+
     addToList() {
         // localStorage.getItem('myData');
-        fetch(`http://localhost:8081/addToList/${this.state.isbn}/1`, {
+        fetch(`http://localhost:8081/addToList/${this.state.isbn}/${this.user}`, {
 			method: 'GET',
         })
 			.then((res) => {
@@ -77,12 +106,13 @@ class Book extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
         })
-            // .then((res) => res.json())
-			.then(data => {
-                console.log(data)
-                alert("Added rating!")
-			})
-			.catch((err) => console.log(err));
+        // .then((res) => res.json())
+        .then(data => {
+            console.log(data);
+            alert("Added rating!");
+            this.setState({userRating: data.rating});
+        })
+        .catch((err) => console.log(err));
     }
 
     getAuthorRec() {
@@ -93,9 +123,16 @@ class Book extends React.Component {
 			.then((books) => {
 				if (!books) return;
 				const recs = books.map(b => (
+                    <div className="carousel-item active">
                     <Link key={b.isbn} to={`/book/${b.isbn}`}>
-                        <BookCard  {...b}/>
+                        <img 
+                            height={150}
+                            className="align-self-start mr-3"
+                            src={b.cover}
+                            alt={b.title}
+                        />
                     </Link>
+                    </div>
                 ));
                 this.setState({authorRecs: recs})
 			})
@@ -109,11 +146,17 @@ class Book extends React.Component {
 			.then((res) => res.json())
 			.then((books) => {
                 if (!books) return;
-                console.log(books);
 				const recs = books.map(b => (
+                    // <div className="carousel-item active">
                     <Link key={b.isbn} to={`/book/${b.isbn}`}>
-                        <BookCard  {...b}/>
+                        <img 
+                            height={150}
+                            className="align-self-start mr-3"
+                            src={b.cover}
+                            alt={b.title}
+                        />
                     </Link>
+                    // </div>
                 ));
                 this.setState({genreRecs: recs})
 			})
@@ -121,6 +164,7 @@ class Book extends React.Component {
     }
     
     render() {
+        console.log("wtf", this.state.userRating)
         return (
             <div>
             {/* <SearchBar/> */}
@@ -133,28 +177,32 @@ class Book extends React.Component {
                         alt="cover"
                     />
                     <Media.Body className="">
-                        <h2 className="title">{this.state.title}</h2>
-                        <h4>by {this.state.author}</h4>
-                        {this.state.rating &&
-                            <ReactStars 
-                                count={5}
-                                value={this.state.rating}
-                                isHalf={true}
-                                size={24}
-                                edit={false}
-                            />
-                        }
+                        <div className="info">
+                            <h2 className="title">{this.state.title}</h2>
+                            <h4>by {this.state.author}</h4>
+                            {this.state.rating &&
+                                <ReactStars 
+                                    count={5}
+                                    value={this.state.rating}
+                                    isHalf={true}
+                                    size={24}
+                                    edit={false}
+                                />
+                            }
+                        </div>
                         <Card className="userInfo flex-column mt-3 p-2 px-5 align-items-center">
                             <Button className="" variant="outline-primary" onClick={() => this.addToList()}>Add to Reading List</Button>
                             {/* <Row className="align-items-center"> */}
                                 <div className="caption">Your Rating</div> 
-                                <ReactStars 
+                                {this.state.userRating}
+                                {/* <ReactStars 
                                     count={5}
+                                    value={this.state.userRating}
                                     isHalf={true}
                                     size={24}
                                     activeColor={"#ff0019"}
                                     onChange={this.addRating}
-                                />
+                                /> */}
                             {/* </Row> */}
                         </Card>
                     </Media.Body>
@@ -213,9 +261,17 @@ class Book extends React.Component {
                 <Card.Body>
                     <h5><b>YOU MAY ALSO LIKE</b></h5>
                     Based Off Author
+                    <div className="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
                         {this.state.authorRecs}
+                        </div>
+                    </div>
                     Based Off Genre
+                    <div className="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
                         {this.state.genreRecs}
+                         </div>
+                    </div>
 
                 </Card.Body>
             </Card>

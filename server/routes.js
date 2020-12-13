@@ -196,6 +196,19 @@ function getAvgRating(req, res) {
   res.send({ rating: 3.5 });
 }
 
+function getUserRating(req, res) {
+  const isbn = req.params.isbn;
+  const user = req.params.isbn;
+
+  const query = `
+    SELECT rating
+    FROM Ratings
+    WHERE isbn = ${isbn} AND user_id = ${user};
+  `;
+
+  res.send({ rating: 4.5 });
+}
+
 function getAllGenres(req, res) {
   res.json([
     { genre: "comedy" },
@@ -336,6 +349,7 @@ module.exports = {
   getAuthorRec: getAuthorRec,
   getGenreRec: getGenreRec,
   getAvgRating: getAvgRating,
+  getUserRating: getUserRating,
   getAllGenres: getAllGenres,
   getTopInGenre: getTopInGenre,
 };
