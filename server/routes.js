@@ -85,7 +85,12 @@ const searchAuthors = (req, res) => {
 };
 
 function getBook(req, res) {
-  var isbn = req.params.isbn;
+  const isbn = req.params.isbn;
+  const query = `
+    SELECT *
+    FROM Book
+    WHERE isbn = ${isbn};
+  `;
 
   res.json({
     isbn: 9780345453747,
@@ -103,7 +108,16 @@ function getBook(req, res) {
 }
 
 function getAuthorRec(req, res) {
-  var isbn = req.params.isbn;
+  const isbn = req.params.isbn;
+  const query = `
+    WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+    SELECT Book.title, Rate.avg_rating 
+    FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+    WHERE Book.author IN 
+    (SELECT author FROM Book WHERE isbn = ${isbn})
+    ORDER BY Rate.avg_rating DESC;
+  `;
+
   res.json([{
     isbn: 9780345453747, 
     title: "Last Chance to See",
@@ -118,17 +132,19 @@ function getAuthorRec(req, res) {
     price: 16,
   }]);
 
-//   WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-// SELECT Book.title, Rate.avg_rating 
-// FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-// WHERE Book.author IN 
-// (SELECT author FROM Book WHERE isbn = A)
-// ORDER BY Rate.avg_rating DESC;
+
 
 }
 
 function getGenreRec(req, res) {
-  var isbn = req.params.isbn;
+  const isbn = req.params.isbn;
+  const query = `
+    WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+    SELECT Book.title, Rate.avg_rating 
+    FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+    WHERE genre IN (SELECT genre FROM Book WHERE isbn = ${isbn})
+    ORDER BY Rate.avg_rating DESC;
+  `;
 
   res.json([{
     isbn: 9780439358070,
@@ -154,24 +170,28 @@ function getGenreRec(req, res) {
   }
   ]);
 
-
-// WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-// SELECT Book.title, Rate.avg_rating 
-// FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-// WHERE genre IN (SELECT genre FROM Book WHERE isbn = A)
-// ORDER BY Rate.avg_rating DESC;
-
 }
 
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
   var user = req.params.user;
+  var query = `
+    INSERT INTO Reading_List
+    VALUES (${isbn}, ${user});
+  `;
+
   console.log(`isbn: ${isbn} user: ${user}`);
   res.send("Added!");
 }
 
 function getAvgRating(req, res) {
-  var isbn = req.params.isbn;
+  const isbn = req.params.isbn;
+  const query = `
+    SELECT AVG(rating)
+    FROM Ratings
+    WHERE isbn = ${isbn};
+  `;
+
   console.log(`isbn: ${isbn}`);
   res.send({ rating: 3.5 });
 }
@@ -313,9 +333,9 @@ module.exports = {
   searchAuthors: searchAuthors,
   getBook: getBook,
   addToReadingList: addToReadingList,
+  getAuthorRec: getAuthorRec,
+  getGenreRec: getGenreRec,
   getAvgRating: getAvgRating,
   getAllGenres: getAllGenres,
   getTopInGenre: getTopInGenre,
-  getAuthorRec: getAuthorRec,
-  getGenreRec: getGenreRec
 };
