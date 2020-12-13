@@ -73,7 +73,7 @@ export default class Dashboard extends React.Component {
     return (
       <div className="Dashboard">
 
-        <PageNavbar active="dashboard" />
+        <PageNavbar active="home" />
 
         <br></br>
         <div className="container movies-container">
@@ -84,7 +84,7 @@ export default class Dashboard extends React.Component {
             </div>
           </div>
 
-          <br></br>
+          <br/>
           <div className="jumbotron">
             <div className="movies-container">
               <div className="results-container" id="results">

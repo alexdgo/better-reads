@@ -1,5 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import SearchBar from './SearchBar'
+import SearchResult from './SearchResult'
 
 export default class PageNavbar extends React.Component {
 	constructor(props) {
@@ -12,7 +14,7 @@ export default class PageNavbar extends React.Component {
 	}
 
 	componentDidMount() {
-		const pageList = ['dashboard', 'recommendations', 'profile'];
+		const pageList = ['home', 'recommendations', 'profile'];
 
 		let navbarDivs = pageList.map((page, i) => {
 			if (this.props.active === page) {
@@ -38,19 +40,20 @@ export default class PageNavbar extends React.Component {
 
 	render() {
 		return (
+			<>
 			<div className="PageNavbar">
 				<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			      <span className="navbar-brand center">Better Reads</span>
 			      <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
 			        <div className="navbar-nav">
-			        {this.state.navDivs}
-					<div className="input-container">
-						<input type='text' placeholder="Enter Book Name" />
-			    	</div>
+								{this.state.navDivs}
 			        </div>
+							<SearchBar/>
 			      </div>
 			    </nav>
 			</div>
+			<SearchResult/>
+			</>
   	);
 	}
 }
