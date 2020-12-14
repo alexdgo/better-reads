@@ -1,4 +1,6 @@
 import React from "react";
+import { Form } from 'react-bootstrap';
+import { Wrapper, StyledButton } from '../style/LoginStyle'
 
 export default class LoginForm extends React.Component {
   constructor(props) {
@@ -98,52 +100,46 @@ export default class LoginForm extends React.Component {
 
   render() {
     return (
-      <div className="LoginForm">
+      <Wrapper>
         <h2 className="LoginForm-title">Login</h2>
-        <br></br>
-        <form onSubmit={this.handleLogin}>
-          <input
-            className="LoginForm-input"
+        <Form onSubmit={this.handleLogin}>
+          <Form.Control
             type="text"
             name="username"
             placeholder="Username"
             value={this.state.username}
             onChange={this.handleUsernameChange}
           />
-          <br></br>
-          <input
-            className="LoginForm-input"
+          <Form.Control
             type="text"
             name="email"
             placeholder="Email"
             value={this.state.email}
             onChange={this.handleEmailChange}
           />
-          <br></br>
-          <input
-            className="LoginForm-input"
+          <Form.Control
             type="password"
             name="password"
             placeholder="Password"
             value={this.state.password}
             onChange={this.handlePasswordChange}
           />
-          <br></br>
-          <input
+          <StyledButton
             className="LoginForm-loginbutton"
             type="submit"
             value="Login"
-          />
-        </form>
-        <button
-          className="LoginForm-registerbutton"
+          >
+            Log In
+          </StyledButton>
+        </Form>
+        <StyledButton
           type="submit"
           value="Register"
           onClick={() => this.handleRegister()}
         >
           Register
-        </button>
-      </div>
+        </StyledButton>
+      </Wrapper>
     );
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchBar from './SearchBar'
+import PageNavbar from './PageNavbar'
 import {Container, Row, Col, Media, Button, Card} from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
@@ -167,7 +167,7 @@ class Book extends React.Component {
         console.log("wtf", this.state.userRating)
         return (
             <div>
-            {/* <SearchBar/> */}
+            <PageNavbar/>
             <Container className="justify-content-center p-3">
                 <Media className="align-items-center justify-content-center">
                     <img 

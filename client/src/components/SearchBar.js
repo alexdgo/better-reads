@@ -2,13 +2,12 @@ import React, { useState, useContext } from 'react'
 import {Button, Form} from 'react-bootstrap'
 
 import { BookContext } from './App'
-import SearchResult from './SearchResult'
 import { SearchWrapper } from '../style/SearchStyle'
 
 const SearchBar = () => {
   const [query, setQuery] = useState()
   const [type, setType] = useState("all")
-  const { queryResult, setQueryResult, setShowResult } = useContext(BookContext)
+  const { setQueryResult, setShowResult } = useContext(BookContext)
   const submitSearch = (e) => {
     e.preventDefault()
     fetch(`http://localhost:8081/search/${type}/${query}`, {
@@ -40,7 +39,7 @@ const SearchBar = () => {
         </Button>
       </Form>
     </SearchWrapper>
-    <SearchResult/>
+    
     </>
   )
 }
