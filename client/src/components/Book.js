@@ -1,11 +1,14 @@
 import React from 'react';
 import PageNavbar from './PageNavbar'
-import {Container, Row, Col, Media, Button, Card} from 'react-bootstrap';
+import {Container, Row, Col, Media, Button, Card, Carousel} from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
 import '../style/book.css';
 import { BookCard } from '../style/SearchStyle'
 import { Link } from 'react-router-dom'
+import { BookIcon } from './BookIcon';
+import { BookRating } from './BookRating';
+import { BookUserControls } from './BookUserControls';
 
 
 
@@ -123,16 +126,17 @@ class Book extends React.Component {
 			.then((books) => {
 				if (!books) return;
 				const recs = books.map(b => (
-                    <div className="carousel-item active">
-                    <Link key={b.isbn} to={`/book/${b.isbn}`}>
-                        <img 
-                            height={150}
-                            className="align-self-start mr-3"
-                            src={b.cover}
-                            alt={b.title}
-                        />
-                    </Link>
-                    </div>
+                    <BookIcon {...b} />
+                    // <div className="carousel-item active">
+                    // <Link key={b.isbn} to={`/book/${b.isbn}`}>
+                    //     <img 
+                    //         height={150}
+                    //         className="p-1"
+                    //         src={b.cover}
+                    //         alt={b.title}
+                    //     />
+                    // </Link>
+                    // </div>
                 ));
                 this.setState({authorRecs: recs})
 			})
@@ -147,16 +151,17 @@ class Book extends React.Component {
 			.then((books) => {
                 if (!books) return;
 				const recs = books.map(b => (
-                    // <div className="carousel-item active">
-                    <Link key={b.isbn} to={`/book/${b.isbn}`}>
-                        <img 
-                            height={150}
-                            className="align-self-start mr-3"
-                            src={b.cover}
-                            alt={b.title}
-                        />
-                    </Link>
-                    // </div>
+                    <BookIcon {...b} />
+                    //  {/* <Carousel.Item className="d-block"> */}
+                        // <Link key={b.isbn} to={`/book/${b.isbn}`}>
+                        //     <img 
+                        //         height={150}
+                        //         className="p-1"
+                        //         src={b.cover}
+                        //         alt={b.title}
+                        //     />
+                        // </Link>
+                    //  {/* </Carousel.Item> */}
                 ));
                 this.setState({genreRecs: recs})
 			})
@@ -164,7 +169,6 @@ class Book extends React.Component {
     }
     
     render() {
-        console.log("wtf", this.state.userRating)
         return (
             <div>
             <PageNavbar/>
@@ -180,30 +184,10 @@ class Book extends React.Component {
                         <div className="info">
                             <h2 className="title">{this.state.title}</h2>
                             <h4>by {this.state.author}</h4>
-                            {this.state.rating &&
-                                <ReactStars 
-                                    count={5}
-                                    value={this.state.rating}
-                                    isHalf={true}
-                                    size={24}
-                                    edit={false}
-                                />
-                            }
+                            <BookRating isbn={this.state.isbn} size = {24}/>
                         </div>
-                        <Card className="userInfo flex-column mt-3 p-2 px-5 align-items-center">
-                            <Button className="" variant="outline-primary" onClick={() => this.addToList()}>Add to Reading List</Button>
-                            {/* <Row className="align-items-center"> */}
-                                <div className="caption">Your Rating</div> 
-                                {this.state.userRating}
-                                {/* <ReactStars 
-                                    count={5}
-                                    value={this.state.userRating}
-                                    isHalf={true}
-                                    size={24}
-                                    activeColor={"#ff0019"}
-                                    onChange={this.addRating}
-                                /> */}
-                            {/* </Row> */}
+                        <Card className="userInfo flex-column mt-3 p-2 px-4 align-items-center">
+                            <BookUserControls isbn={this.state.isbn} />
                         </Card>
                     </Media.Body>
                 </Media>
@@ -259,19 +243,24 @@ class Book extends React.Component {
                 </Card>
             <Card className="rec">
                 <Card.Body>
-                    <h5><b>YOU MAY ALSO LIKE</b></h5>
-                    Based Off Author
+                    {/* <h4><b>YOU MAY ALSO ENJOY</b></h4> */}
+                    <h5>More By This Author</h5>
                     <div className="carousel slide" data-ride="carousel">
+                    {/* <Carousel> */}
                         <div class="carousel-inner">
                         {this.state.authorRecs}
                         </div>
+                    {/* </Carousel> */}
                     </div>
-                    Based Off Genre
+                    <hr />
+                    <h5>More in This Genre</h5>
+                    {/* <Carousel > */}
                     <div className="carousel slide" data-ride="carousel">
                         <div class="carousel-inner">
                         {this.state.genreRecs}
                          </div>
                     </div>
+                    {/* </Carousel> */}
 
                 </Card.Body>
             </Card>
