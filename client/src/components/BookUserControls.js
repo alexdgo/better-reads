@@ -5,30 +5,23 @@ import ReactStars from "react-rating-stars-component";
 
 
 export function BookUserControls({isbn, small}) {
-    const [userRating, setUserRating] = useState([]);
-    const user = 1;
+    let [userRating, setUserRating] = useState();
+    const user = window.sessionStorage.getItem("username") || 1; 
 
     useEffect(() => {
         fetch(`http://localhost:8081/getUserRating/${isbn}/${user}`, {
 			method: 'GET',
 		})
-			.then((res) => res.json())
-			.then((userRating) => {
-                if (!userRating) return;
-                
-                var stars = <ReactStars 
-                    count={5}
-                    value={userRating.rating}
-                    isHalf={true}
-                    size={small ? 15 : 24}
-                    activeColor={"#ff0019"}
-                    onChange={addRating}
-                />;
-
-                setUserRating(stars);
-			})
-			.catch((err) => console.log(err));
-    });
+        .then((res) => res.json())
+        .then((rtg) => {
+            if (!rtg.rating) {
+                setUserRating(0);
+            } else {
+                setUserRating(rtg.rating);
+            }             
+        })
+        .catch((err) => console.log(err));
+    }, [setUserRating, userRating]);
 
     function addRating(rating) {
         const data = { isbn: isbn, rating: rating, user: user}
@@ -59,8 +52,19 @@ export function BookUserControls({isbn, small}) {
     return (
         <>
             <Button className={small ? "btn-sm" : ""} variant="outline-primary" onClick={addToList}>Add to Reading List</Button>
-            <div className="caption">Your Rating</div> 
-            {userRating}
+            {userRating != null &&
+                <>
+                <div className="caption">Your Rating</div> 
+                    <ReactStars 
+                        count={5}
+                        value={userRating || 0}
+                        isHalf={true}
+                        size={small ? 15 : 24}
+                        activeColor={"#ff0019"}
+                        onChange={addRating}
+                    /> 
+                </>
+            }
         </>
     )
 }

@@ -9,75 +9,90 @@ let books = new Map();
 
 const searchAll = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-    SELECT Book.title, Rate.avg_rating
+    SELECT Book.*, Rate.avg_rating
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-    WHERE Book.title LIKE ${req.params.query} OR Book.author LIKE ${req.params.query}
-    ORDER BY Rate.avg_rating DESC;`;
-  // connection.query(query, (err, rows, fields) => {
-  //   if (err) console.log(err)
-  //   else {
-  //     res.json(rows)
-  //   }
-  // })
-  // trial
-  res.json([
-    {
-      isbn: 9780345453747,
-      title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-      author: "Douglas Adams",
-      language: "eng",
-      num_pages: 815,
-      publisher: "Del Rey Books",
-      year_published: 2002,
-      cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-      format: "Paperback",
-      genre: "Science-Fiction-Fantasy-Horror",
-      price: 16.82,
-      avg_rating: 5,
-    },
-    {
-      isbn: 123,
-      title: "test",
-      author: "Alex",
-      language: "eng",
-      num_pages: 2,
-      publisher: "Del Rey Books",
-      year_published: 2000,
-      cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-      format: "Paperback",
-      genre: "Science-Fiction-Fantasy-Horror",
-      price: 42,
-      avg_rating: 2.5,
-    },
-  ]);
+    WHERE Book.title LIKE '%${req.params.query}%' OR Book.author LIKE '%${req.params.query}%'
+    ORDER BY Rate.avg_rating DESC`;
+
+  runQuery(query, result => {
+    if (result.rows) {
+      console.log(result.rows);
+      res.json(result.rows);
+    }
+  })
+
+  // res.json([
+  //   {
+  //     isbn: 9780345453747,
+  //     title: "The Ultimate Hitchhiker's Guide to the Galaxy",
+  //     author: "Douglas Adams",
+  //     language: "eng",
+  //     num_pages: 815,
+  //     publisher: "Del Rey Books",
+  //     year_published: 2002,
+  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
+  //     format: "Paperback",
+  //     genre: "Science-Fiction-Fantasy-Horror",
+  //     price: 16.82,
+  //     avg_rating: 5,
+  //   },
+  //   {
+  //     isbn: 123,
+  //     title: "test",
+  //     author: "Alex",
+  //     language: "eng",
+  //     num_pages: 2,
+  //     publisher: "Del Rey Books",
+  //     year_published: 2000,
+  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
+  //     format: "Paperback",
+  //     genre: "Science-Fiction-Fantasy-Horror",
+  //     price: 42,
+  //     avg_rating: 2.5,
+  //   },
+  // ]);
 };
 
 const searchBooks = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-    SELECT Book.title, Rate.avg_rating
+    SELECT Book.*, Rate.avg_rating
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-    WHERE Book.title LIKE ${req.params.query}
-    ORDER BY Rate.avg_rating DESC;`;
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
+    WHERE Book.title LIKE '${req.params.query}'
+    ORDER BY Rate.avg_rating DESC`;
+  
+  runQuery(query, result => {
+    if (result.rows) {
+      console.log(result.rows);
+      res.json(result.rows);
     }
-  });
+  })
+  // connection.query(query, (err, rows, fields) => {
+  //   if (err) console.log(err);
+  //   else {
+  //     res.json(rows);
+  //   }
+  // });
 };
 
 const searchAuthors = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-    SELECT Book.title, Book.cover, Book.author, Rate.avg_rating
+    SELECT Book.*, Rate.avg_rating
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
     WHERE Book.author LIKE ${req.params.query}
-    ORDER BY Rate.avg_rating DESC;`;
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
+    ORDER BY Rate.avg_rating DESC`;
+
+  runQuery(query, result => {
+    if (result.rows) {
+      console.log(result.rows);
+      res.json(result.rows);
     }
-  });
+  })
+  // connection.query(query, (err, rows, fields) => {
+  //   if (err) console.log(err);
+  //   else {
+  //     res.json(rows);
+  //   }
+  // });
 };
 
 function getBook(req, res) {
@@ -94,20 +109,6 @@ function getBook(req, res) {
       res.json(result.rows[0]);
     }
   })
-
-  // res.json({
-  //   isbn: 9780345453747,
-  //   title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-  //   author: "Douglas Adams",
-  //   language: "eng",
-  //   num_pages: 815,
-  //   publisher: "Del Rey Books",
-  //   year_published: 2002,
-  //   cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-  //   format: "Paperback",
-  //   genre: "Science-Fiction-Fantasy-Horror",
-  //   price: 16.82,
-  // });
 }
 
 function getAuthorRec(req, res) {
@@ -122,23 +123,8 @@ function getAuthorRec(req, res) {
   `;
 
   runQuery(query, result => {
-    console.log(result.rows);
     res.json(result.rows);
   })
-
-  // res.json([{
-  //   isbn: 9780345453747, 
-  //   title: "Last Chance to See",
-  //   author: "Douglas Adams",
-  //   language: "eng",
-  //   num_pages: 815,
-  //   publisher: "Del Rey Books",
-  //   year_published: 1992,
-  //   cover: "http://images.amazon.com/images/P/0345371984.01.LZZZZZZZ.jpg",
-  //   format: "Hardback",
-  //   genre: "Dictionaries-Languages",
-  //   price: 16,
-  // }]);
 
 }
 
@@ -146,60 +132,52 @@ function getGenreRec(req, res) {
   const isbn = req.params.isbn;
   const query = `
     WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-    SELECT Book.title, Rate.avg_rating 
+    SELECT Book.*, Rate.avg_rating 
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
     WHERE genre IN (SELECT genre FROM Book WHERE isbn = ${isbn})
-    ORDER BY Rate.avg_rating DESC;
+    ORDER BY Rate.avg_rating DESC
   `;
 
-  res.json([{
-    isbn: 9780439358070,
-    title: "Harry Potter and the Philosopher's Stone",
-    author: "J.K. Rowling",
-    language: "eng",
-    num_pages: 870,
-    publisher: "Scholastic Inc.",
-    year_published: 2004,
-    genre: "Science-Fiction-Fantasy-Horror",
-    cover: "https://d1w7fb2mkkr3kw.cloudfront.net/assets/images/book/mid/9781/4088/9781408855652.jpg"
-  }, 
-  {
-    isbn: 9780439358071,
-    title: "Harry Potter and the Order of the Phoenix",
-    author: "J.K. Rowling",
-    language: "eng",
-    num_pages: 870,
-    publisher: "Scholastic Inc.",
-    year_published: 2005,
-    genre: "Science-Fiction-Fantasy-Horror",
-    cover: "http://images.amazon.com/images/P/0439358078.01.LZZZZZZZ.jpg"
-  }
-  ]);
+  runQuery(query, result => {
+    if (result.rows) {
+      console.log(result.rows);
+      res.json(result.rows);
+    }
+  })
 
 }
 
+// fix error handling
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
   var user = req.params.user;
   var query = `
-    INSERT INTO Reading_List
-    VALUES (${isbn}, ${user});
+    INSERT INTO ReadingList
+    VALUES (${isbn}, ${user})
   `;
 
-  console.log(`isbn: ${isbn} user: ${user}`);
-  res.send("Added!");
+  runQuery(query, result => {
+    res.status(200).json({res: result});
+  }, error => {
+    res.status(500).json({error: error});
+  })
 }
 
 function getAvgRating(req, res) {
   const isbn = req.params.isbn;
   const query = `
-    SELECT AVG(rating)
+    SELECT isbn, AVG(rating) AS rating
     FROM Ratings
-    WHERE isbn = ${isbn};
+    GROUP BY isbn
+    HAVING isbn = ${isbn}
   `;
 
-  console.log(`isbn: ${isbn}`);
-  res.send({ rating: 3.5 });
+  runQuery(query, result => {
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    }
+
+  })
 }
 
 function getUserRating(req, res) {
@@ -209,10 +187,15 @@ function getUserRating(req, res) {
   const query = `
     SELECT rating
     FROM Ratings
-    WHERE isbn = ${isbn} AND user_id = ${user};
+    WHERE isbn = ${isbn} AND user_id = ${user}
   `;
 
-  res.send({ rating: 4.5 });
+  runQuery(query, result => {
+    if (result) {
+      console.log(result.rows);
+      res.json(result.rows);
+    }
+  })
 }
 
 function getAllGenres(req, res) {

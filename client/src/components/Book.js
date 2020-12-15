@@ -19,6 +19,8 @@ class Book extends React.Component {
     constructor(props) {
         super(props);
         const isbn = this.props.match.params.isbn;
+        const user = window.sessionStorage.getItem("username"); 
+
         this.state = {
             isbn: isbn,
             authorRecs: [],
@@ -31,8 +33,6 @@ class Book extends React.Component {
         this.getUserRating = this.getUserRating.bind(this);
         this.getAuthorRec = this.getAuthorRec.bind(this);
         this.render = this.render.bind(this);
-        this.user = 1; 
-
     }
 
     componentDidMount() {
@@ -60,8 +60,8 @@ class Book extends React.Component {
                     language: book.LANGUAGE,
                     cover: book.COVER || placeholder, 
                     publisher: book.PUBLISHER,
-                    year_published: parseInt(book.YEAR_PUBLISHED),
-                    price: book.PRICE,
+                    year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                    price: book.PRICE && book.PRICE.toFixed(2),
                     num_pages: book.NUM_PAGES,
                 });
 			})
@@ -146,7 +146,7 @@ class Book extends React.Component {
                         language: book.LANGUAGE,
                         cover: book.COVER || placeholder, 
                         publisher: book.PUBLISHER,
-                        year_published: parseInt(book.YEAR_PUBLISHED),
+                        year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
                         price: book.PRICE,
                         num_pages: book.NUM_PAGES,
                     }
@@ -174,19 +174,21 @@ class Book extends React.Component {
 			.then((res) => res.json())
 			.then((books) => {
                 if (!books) return;
-				const recs = books.map(b => (
-                    <BookIcon {...b} />
-                    //  {/* <Carousel.Item className="d-block"> */}
-                        // <Link key={b.isbn} to={`/book/${b.isbn}`}>
-                        //     <img 
-                        //         height={150}
-                        //         className="p-1"
-                        //         src={b.cover}
-                        //         alt={b.title}
-                        //     />
-                        // </Link>
-                    //  {/* </Carousel.Item> */}
-                ));
+				const recs = books.map(book => {
+                    const b = {
+                        isbn: book.ISBN, 
+                        title: book.TITLE, 
+                        author: book.AUTHOR,
+                        genre: book.GENRE,
+                        language: book.LANGUAGE,
+                        cover: book.COVER || placeholder, 
+                        publisher: book.PUBLISHER,
+                        year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                        price: book.PRICE && book.PRICE.toFixed(2),
+                        num_pages: book.NUM_PAGES,
+                    }
+                    return <BookIcon {...b} />
+                });
                 this.setState({genreRecs: recs})
 			})
 			.catch((err) => console.log(err));
