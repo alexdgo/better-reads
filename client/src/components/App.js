@@ -19,7 +19,6 @@ function App() {
       value={{ queryResult, setQueryResult, showResult, setShowResult }}
     >
       <div className="App">
-        <PageNavbar/>
         <Router>
           <Switch>
             <Route exact path="/" render={() => <Login />} />
