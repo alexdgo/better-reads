@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import { BookIcon } from './BookIcon';
 import { BookRating } from './BookRating';
 import { BookUserControls } from './BookUserControls';
-
+import placeholder from '../files/placeholder.png';
 
 
 // TODO: book recs
@@ -51,7 +51,19 @@ class Book extends React.Component {
 			.then((book) => {
 				if (!book) return;
                 
-				this.setState(book);
+                console.log("cover" , book.cover);
+				this.setState({
+                    isbn: book.ISBN, 
+                    title: book.TITLE, 
+                    author: book.AUTHOR,
+                    genre: book.GENRE,
+                    language: book.LANGUAGE,
+                    cover: book.COVER || placeholder, 
+                    publisher: book.PUBLISHER,
+                    year_published: parseInt(book.YEAR_PUBLISHED),
+                    price: book.PRICE,
+                    num_pages: book.NUM_PAGES,
+                });
 			})
 			.catch((err) => console.log(err));
     }
@@ -125,8 +137,20 @@ class Book extends React.Component {
 			.then((res) => res.json())
 			.then((books) => {
 				if (!books) return;
-				const recs = books.map(b => (
-                    <BookIcon {...b} />
+				const recs = books.map(book => {
+                    const b = {
+                        isbn: book.ISBN, 
+                        title: book.TITLE, 
+                        author: book.AUTHOR,
+                        genre: book.GENRE,
+                        language: book.LANGUAGE,
+                        cover: book.COVER || placeholder, 
+                        publisher: book.PUBLISHER,
+                        year_published: parseInt(book.YEAR_PUBLISHED),
+                        price: book.PRICE,
+                        num_pages: book.NUM_PAGES,
+                    }
+                    return <BookIcon {...b} />
                     // <div className="carousel-item active">
                     // <Link key={b.isbn} to={`/book/${b.isbn}`}>
                     //     <img 
@@ -137,7 +161,7 @@ class Book extends React.Component {
                     //     />
                     // </Link>
                     // </div>
-                ));
+                });
                 this.setState({authorRecs: recs})
 			})
 			.catch((err) => console.log(err));

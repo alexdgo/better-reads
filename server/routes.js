@@ -1,8 +1,4 @@
-var config = require("./db-config.js");
-var mysql = require("mysql");
-
-config.connectionLimit = 10;
-var connection = mysql.createPool(config);
+const runQuery = require("./oracleinit")
 
 /* -------------------------------------------------- */
 /* ------------------- Route Handlers --------------- */
@@ -89,50 +85,60 @@ function getBook(req, res) {
   const query = `
     SELECT *
     FROM Book
-    WHERE isbn = ${isbn};
+    WHERE isbn = ${isbn}
   `;
+  runQuery(query, (result) => {
+    if (result.rows.length == 0) {
+      res.json({})
+    } else {
+      res.json(result.rows[0]);
+    }
+  })
 
-  res.json({
-    isbn: 9780345453747,
-    title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-    author: "Douglas Adams",
-    language: "eng",
-    num_pages: 815,
-    publisher: "Del Rey Books",
-    year_published: 2002,
-    cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-    format: "Paperback",
-    genre: "Science-Fiction-Fantasy-Horror",
-    price: 16.82,
-  });
+  // res.json({
+  //   isbn: 9780345453747,
+  //   title: "The Ultimate Hitchhiker's Guide to the Galaxy",
+  //   author: "Douglas Adams",
+  //   language: "eng",
+  //   num_pages: 815,
+  //   publisher: "Del Rey Books",
+  //   year_published: 2002,
+  //   cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
+  //   format: "Paperback",
+  //   genre: "Science-Fiction-Fantasy-Horror",
+  //   price: 16.82,
+  // });
 }
 
 function getAuthorRec(req, res) {
   const isbn = req.params.isbn;
   const query = `
     WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-    SELECT Book.title, Rate.avg_rating 
+    SELECT Book.*, Rate.avg_rating 
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
     WHERE Book.author IN 
     (SELECT author FROM Book WHERE isbn = ${isbn})
-    ORDER BY Rate.avg_rating DESC;
+    ORDER BY Rate.avg_rating DESC
   `;
 
-  res.json([{
-    isbn: 9780345453747, 
-    title: "Last Chance to See",
-    author: "Douglas Adams",
-    language: "eng",
-    num_pages: 815,
-    publisher: "Del Rey Books",
-    year_published: 1992,
-    cover: "http://images.amazon.com/images/P/0345371984.01.LZZZZZZZ.jpg",
-    format: "Hardback",
-    genre: "Dictionaries-Languages",
-    price: 16,
-  }]);
+  runQuery(query, result => {
+    console.log(result.rows);
+    res.json(result.rows);
+  })
 
-
+  // res.json([{
+  //   isbn: 9780345453747, 
+  //   title: "Last Chance to See",
+  //   author: "Douglas Adams",
+  //   language: "eng",
+  //   num_pages: 815,
+  //   publisher: "Del Rey Books",
+  //   year_published: 1992,
+  //   cover: "http://images.amazon.com/images/P/0345371984.01.LZZZZZZZ.jpg",
+  //   format: "Hardback",
+  //   genre: "Dictionaries-Languages",
+  //   price: 16,
+  // }]);
 
 }
 
