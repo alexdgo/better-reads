@@ -1,6 +1,7 @@
 import React from "react";
 import PageNavBar from './PageNavbar'
 import { Wrapper } from '../style/shared'
+import { BookCard } from '../style/SearchStyle'
 
 export default class Profile extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class Profile extends React.Component {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        username: window.sessionStorage.getItem("username"),
+        userid: window.sessionStorage.getItem("user_id"),
       }),
     };
     fetch("http://localhost:8081/userBooks/", requestOptions).then(
@@ -28,7 +29,7 @@ export default class Profile extends React.Component {
           if (res.status === "false") {
             alert("error");
           } else {
-            this.setState({ readBooks: res.books });
+            this.setState({ readBooks: res });
           }
         });
       }
@@ -41,7 +42,10 @@ export default class Profile extends React.Component {
       <PageNavBar/>
       <Wrapper>
         <h2>My book</h2>
-        <div>{this.state.readBooks.slice(10)}</div>
+        {console.log(this.state.readBooks)}
+        {this.state.readBooks.map(b => (
+          <BookCard {...b}/>
+        ))}
       </Wrapper>
       </>
     );

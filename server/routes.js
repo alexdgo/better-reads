@@ -200,11 +200,12 @@ function getGenreRec(req, res) {
 // fix error handling
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
-  var user = req.params.user || 1;
+  var user = req.params.user;
   var query = `
-    INSERT INTO ReadingList
-    VALUES (${isbn}, ${user})
+    INSERT INTO ReadingList(user_id, isbn)
+    VALUES (${user}, ${isbn})
   `;
+  console.log(query)
 
   runQuery(
     query,
@@ -221,6 +222,8 @@ function addRating(req, res) {
   const isbn = req.body.isbn;
   const user = req.body.user;
   const rating = req.body.rating;
+
+  console.log("addr: ", user);
 
   const query = `
     INSERT INTO Ratings(isbn, user_id, rating)
@@ -360,22 +363,16 @@ async function getUser(req, res) {
 
 // Get user's book
 function getUserBooks(req, res) {
-  const username = req.body.username;
-  books.set({ username: username, books: Math.random() }, 0);
-  var allBooks = [];
-  for (const [key, value] of books.entries()) {
-    if (key.username === username) {
-      allBooks.push(key.books);
-    }
-  }
-  console.log(allBooks);
-  const info = users.get(username);
-  res.json({
-    status: "true",
-    username: username,
-    books: allBooks,
-  });
+  const userid = req.body.userid;
+  const query = `SELECT Book.*
+  FROM Book LEFT JOIN ReadingList ON Book.isbn = ReadingList.isbn
+  WHERE user_id = ${userid}`
+  runQuery(query, result => {
+    console.log(result.rows);
+    res.json(result.rows);
+  })
 }
+
 function getTopInGenre(req, res) {
   const genre = req.params.genre;
   console.log(genre);
@@ -427,6 +424,41 @@ function getTopInGenre(req, res) {
   //   },
   // ]);
 }
+
+function getLocationRec(req, res) {
+    const user = req.params.username;
+
+    const query = `
+      WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+      SELECT Book.*, Rate.avg_rating FROM 
+      Reader JOIN Ratings ON Reader.user_id = Ratings.user_id
+      JOIN Book ON Ratings.isbn = Book.isbn
+      JOIN Rate ON Rate.isbn = Book.isbn
+      WHERE Reader.location LIKE (SELECT location FROM Reader WHERE user_id = ${user})
+    `;
+
+    runQuery(query, result => {
+      res.json(result.rows);
+    })
+}
+
+function getAgeRec(req, res) {
+  const user = req.params.username;
+
+  const query = `
+    WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+    SELECT Book.*, Rate.avg_rating FROM 
+    Reader JOIN Ratings ON Reader.user_id = Ratings.user_id
+    JOIN Book ON Ratings.isbn = Book.isbn
+    JOIN Rate ON Rate.isbn = Book.isbn
+    WHERE Reader.age >= 0.8 * (SELECT age FROM Reader WHERE Reader.user_id = ${user}) 
+    AND Reader.age <= 1.2 * (SELECT age FROM Reader WHERE Reader.user_id = ${user})
+  `;
+
+  runQuery(query, result => {
+      res.json(result.rows);
+  })
+}
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   addUser: addUser,
@@ -444,4 +476,6 @@ module.exports = {
   getUserRating: getUserRating,
   getAllGenres: getAllGenres,
   getTopInGenre: getTopInGenre,
+  getLocationRec: getLocationRec,
+  getAgeRec: getAgeRec
 };

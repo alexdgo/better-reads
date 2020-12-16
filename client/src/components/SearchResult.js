@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { BookContext } from './App'
-import { Link } from 'react-router-dom'
 import { ResultWrapper, Overlay, ResultBlock, BookCard } from '../style/SearchStyle'
 import placeholder from '../files/placeholder.png';
 import { BookIcon } from './BookIcon';
@@ -29,9 +28,9 @@ const SearchResult = () => {
           }
           
           return (
-          <Link to={`/book/${d.isbn}`}>
+          <a href={`/book/${d.isbn}`}>
             <BookCard {...d}/>
-          </Link>)
+          </a>)
         })}
       </ResultBlock>
     </ResultWrapper>
