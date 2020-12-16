@@ -109,7 +109,12 @@ export default class Dashboard extends React.Component {
           <div className="jumbotron">
             <div className="movies-container">
               <div className="results-container" id="results">
-                <div class="row">{this.state.books}</div>
+                {/* <Carousel > */}
+							<div className="carousel slide" data-ride="carousel">
+								<div class="carousel-inner">{this.state.books}</div>
+							</div>
+							{/* </Carousel> */}
+                {/* <div class="row">{this.state.books}</div> */}
               </div>
             </div>
           </div>
