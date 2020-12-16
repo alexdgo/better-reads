@@ -1,27 +1,8 @@
-var config = require("./db-config.js");
-var mysql = require("mysql");
-config.connectionLimit = 10;
-var connection = mysql.createPool(config);
 const oracledb = require("oracledb");
+const generateConnectionProps = require("./oracleinit");
+
+oracledb.outFormat = oracledb.OBJECT;
 oracledb.autoCommit = true;
-let generateConnectionProps = () => {
-  const connectString = `
-  (DESCRIPTION=
-    (ADDRESS=
-      (PROTOCOL=TCP)
-      (HOST=cis550proj.cgn43zyqcysl.us-east-1.rds.amazonaws.com)
-      (PORT=1521)
-    )
-    (CONNECT_DATA=
-      (SID=BOOKSDB)
-      )
-    )`;
-  return {
-    user: "admin",
-    password: "welovesusan",
-    connectString: connectString,
-  };
-};
 
 async function runQuery(query, callback) {
   //   if (_debugMode) console.log(`oracledb running query: ${query}`);
@@ -189,22 +170,32 @@ function getGenreRec(req, res) {
 // fix error handling
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
-  var user = req.params.user;
+  var user = req.params.user || 1;
   var query = `
     INSERT INTO ReadingList
     VALUES (${isbn}, ${user})
   `;
 
-  runQuery(
-    query,
-    (result) => {
-      res.status(200).json({ res: result });
-    },
-    (error) => {
-      res.status(500).json({ error: error });
-    }
-  );
+  runQuery(query, (result) => {
+    console.log(result);
+  });
 }
+
+function addRating(req, res) {
+  const isbn = req.body.isbn;
+  const user = req.body.user;
+  const rating = req.body.rating;
+
+  const query = `
+    INSERT INTO Ratings(isbn, user_id, rating)
+    VALUES (${isbn}, ${user}, ${rating})
+  `;
+
+  runQuery(query, (result) => {
+    console.log(result);
+  });
+}
+
 function getAvgRating(req, res) {
   const isbn = req.params.isbn;
   const query = `
@@ -360,6 +351,7 @@ module.exports = {
   searchAuthors: searchAuthors,
   getBook: getBook,
   addToReadingList: addToReadingList,
+  addRating: addRating,
   getAuthorRec: getAuthorRec,
   getGenreRec: getGenreRec,
   getAvgRating: getAvgRating,

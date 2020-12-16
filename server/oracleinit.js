@@ -1,7 +1,4 @@
-const oracledb = require("oracledb");
-oracledb.outFormat = oracledb.OBJECT;
-
-let generateConnectionProps = () => {
+function generateConnectionProps() {
   const connectString = `
   (DESCRIPTION=
     (ADDRESS=
@@ -21,29 +18,4 @@ let generateConnectionProps = () => {
   }
 }
 
-async function runQuery(query, callback) {
-//   if (_debugMode) console.log(`oracledb running query: ${query}`);
-  let connection;
-  let result;
-  const connectionProps = generateConnectionProps();
-
-  try {
-    connection = await oracledb.getConnection(connectionProps);
-    result = await connection.execute(query);
-  } catch (err) {
-    console.error(err);
-    return -1;
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-        callback(result);
-      } catch (err) {
-        console.error(err);
-        return -1;
-      }
-    }
-  }
-}
-
-module.exports = runQuery;
+module.exports = generateConnectionProps;
