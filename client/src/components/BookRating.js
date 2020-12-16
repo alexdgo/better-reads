@@ -4,7 +4,7 @@ import ReactStars from "react-rating-stars-component";
 
 
 export function BookRating({isbn, size}) {
-    let [rating, setRating] = useState(0);
+    let [rating, setRating] = useState();
 
     // only runs once when the component is mounted not when state updates bc of the dependency
     useEffect(() => {
@@ -31,7 +31,7 @@ export function BookRating({isbn, size}) {
     // }, [rating]);
 
     return (
-        rating &&
+        rating != null &&
             <ReactStars 
                 count={5}
                 value={rating}

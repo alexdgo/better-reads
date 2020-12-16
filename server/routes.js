@@ -1,12 +1,37 @@
-const runQuery = require("./oracleinit")
+const oracledb = require("oracledb");
+const generateConnectionProps = require("./oracleinit")
+
+oracledb.outFormat = oracledb.OBJECT;
+oracledb.autoCommit = true;
+
+async function runQuery(query, callback) {
+//   if (_debugMode) console.log(`oracledb running query: ${query}`);
+  let connection;
+  let result;
+  const connectionProps = generateConnectionProps();
+
+  try {
+    connection = await oracledb.getConnection(connectionProps);
+    result = await connection.execute(query);
+  } catch (err) {
+    console.error(err);
+    return -1;
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+        callback(result);
+      } catch (err) {
+        console.error(err);
+        return -1;
+      }
+    }
+  }
+}
 
 /* -------------------------------------------------- */
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
-
-let users = new Map();
-let books = new Map();
-
 const searchAll = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.*, Rate.avg_rating
@@ -52,7 +77,6 @@ const searchAll = (req, res) => {
   //   },
   // ]);
 };
-
 const searchBooks = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.*, Rate.avg_rating
@@ -73,7 +97,6 @@ const searchBooks = (req, res) => {
   //   }
   // });
 };
-
 const searchAuthors = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.*, Rate.avg_rating
@@ -94,7 +117,6 @@ const searchAuthors = (req, res) => {
   //   }
   // });
 };
-
 function getBook(req, res) {
   const isbn = req.params.isbn;
   const query = `
@@ -150,17 +172,30 @@ function getGenreRec(req, res) {
 // fix error handling
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
-  var user = req.params.user;
+  var user = req.params.user || 1;
   var query = `
     INSERT INTO ReadingList
     VALUES (${isbn}, ${user})
   `;
 
   runQuery(query, result => {
-    res.status(200).json({res: result});
-  }, error => {
-    res.status(500).json({error: error});
+    console.log(result)
   })
+}
+
+function addRating(req, res) {
+  const isbn = req.body.isbn;
+  const user = req.body.user; 
+  const rating = req.body.rating;
+
+  const query = `
+    INSERT INTO Ratings(isbn, user_id, rating)
+    VALUES (${isbn}, ${user}, ${rating})
+  `;
+
+  runQuery(query, result => {
+    console.log(result)
+  });
 }
 
 function getAvgRating(req, res) {
@@ -197,7 +232,6 @@ function getUserRating(req, res) {
     }
   })
 }
-
 function getAllGenres(req, res) {
   const query = `
     WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
@@ -211,64 +245,83 @@ function getAllGenres(req, res) {
   })
 }
 // Create new user
-function addUser(req, res) {
+async function addUser(req, res) {
+  let connection;
+  let result;
+  const connectionProps = generateConnectionProps();
+  const name = req.body.name;
   const username = req.body.username;
-  const email = req.body.email;
   const password = req.body.password;
-  if (users.has(username)) {
-    res.json({
-      status: "false",
-    });
+  const location = req.body.location;
+  const age = req.body.age;
+  const user_id = new Date().getTime();
+  if (user_id >= 1 && user_id <= 62000) {
+    res.json({ status: "false" });
   } else {
-    users.set(username, { email: email, password: password });
-    res.json({
-      status: "true",
-      username: username,
-      email: email,
-      password: password,
-    });
-  }
-}
-
-// Get user
-function getUser(req, res) {
-  const username = req.body.username;
-  if (users.has(username)) {
-    const info = users.get(username);
-    res.json({
-      status: "true",
-      username: username,
-      email: info.email,
-      password: info.password,
-    });
-  } else {
-    res.json({
-      status: "false",
-    });
+    try {
+      connection = await oracledb.getConnection(connectionProps);
+      result = await connection.execute(
+        `INSERT INTO Reader (user_id, location, age, username, password) VALUES ('${user_id}', '${location}', ${age}, '${username}', '${password}')`
+      );
+      console.log(result);
+      res.json({
+        status: "true",
+        user_id: user_id,
+        name: name,
+        username: username,
+        password: password,
+        location: location,
+        age: age,
+      });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "false" });
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+          return -1;
+        }
+      }
+    }
   }
 }
 
 // Log user
-function getUser(req, res) {
+async function getUser(req, res) {
+  let connection;
+  let result;
+  const connectionProps = generateConnectionProps();
   const username = req.body.username;
-  if (users.has(username)) {
-    const info = users.get(username);
-    if (info.password === req.body.password) {
-      res.json({
-        status: "true",
-        username: username,
-        email: info.email,
-        password: info.password,
-      });
-    } else {
-      res.json({
-        status: "false",
-      });
-    }
-  } else {
+  const password = req.body.password;
+  try {
+    connection = await oracledb.getConnection(connectionProps);
+    result = await connection.execute(
+      `SELECT * FROM Reader WHERE username = '${username}'`
+    );
+    console.log(result);
     res.json({
-      status: "false",
+      status: "true",
+      user_id: result.metaData[0],
+      username: result.metaData[3],
+      password: result.metaData[4],
+      location: result.metaData[1],
+      age: result.metaData[2],
     });
+  } catch (err) {
+    console.error(err);
+    res.json({ status: "false" });
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+        return -1;
+      }
+    }
   }
 }
 
@@ -290,7 +343,6 @@ function getUserBooks(req, res) {
     books: allBooks,
   });
 }
-
 function getTopInGenre(req, res) {
   const genre = req.params.genre;
   console.log(genre);
@@ -338,7 +390,6 @@ function getTopInGenre(req, res) {
   //   },
   // ]);
 }
-
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   addUser: addUser,
@@ -349,6 +400,7 @@ module.exports = {
   searchAuthors: searchAuthors,
   getBook: getBook,
   addToReadingList: addToReadingList,
+  addRating: addRating,
   getAuthorRec: getAuthorRec,
   getGenreRec: getGenreRec,
   getAvgRating: getAvgRating,
