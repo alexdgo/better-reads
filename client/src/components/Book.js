@@ -38,11 +38,14 @@ class Book extends React.Component {
 			.then((res) => res.json())
 			.then((book) => {
 				if (!book) return;
+				const authorTrimmed = book.AUTHOR.includes('/')
+					? book.AUTHOR.slice(0, book.AUTHOR.indexOf('/'))
+					: book.AUTHOR;
 
 				this.setState({
 					isbn: book.ISBN,
 					title: book.TITLE,
-					author: book.AUTHOR,
+					author: authorTrimmed,
 					genre: book.GENRE,
 					language: book.LANGUAGE,
 					cover: book.COVER || placeholder,
@@ -63,10 +66,13 @@ class Book extends React.Component {
 			.then((books) => {
 				if (!books) return;
 				const recs = books.map((book) => {
+					const authorTrimmed = book.AUTHOR.includes('/')
+						? book.AUTHOR.slice(0, book.AUTHOR.indexOf('/'))
+						: book.AUTHOR;
 					const b = {
 						isbn: book.ISBN,
 						title: book.TITLE,
-						author: book.AUTHOR,
+						author: authorTrimmed,
 						genre: book.GENRE,
 						language: book.LANGUAGE,
 						cover: book.COVER || placeholder,
@@ -90,10 +96,13 @@ class Book extends React.Component {
 			.then((books) => {
 				if (!books) return;
 				const recs = books.map((book) => {
+					const authorTrimmed = book.AUTHOR.includes('/')
+						? book.AUTHOR.slice(0, book.AUTHOR.indexOf('/'))
+						: book.AUTHOR;
 					const b = {
 						isbn: book.ISBN,
 						title: book.TITLE,
-						author: book.AUTHOR,
+						author: authorTrimmed,
 						genre: book.GENRE,
 						language: book.LANGUAGE,
 						cover: book.COVER || placeholder,

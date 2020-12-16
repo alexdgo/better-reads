@@ -30,10 +30,13 @@ class UserRec extends React.Component {
 			.then((books) => {
 				if (!books) return;
 				const recs = books.map((book) => {
+					const authorTrimmed = book.AUTHOR.includes('/')
+						? book.AUTHOR.slice(0, book.AUTHOR.indexOf('/'))
+						: book.AUTHOR;
 					const b = {
 						isbn: book.ISBN,
 						title: book.TITLE,
-						author: book.AUTHOR,
+						author: authorTrimmed,
 						genre: book.GENRE,
 						language: book.LANGUAGE,
 						cover: book.COVER || placeholder,
@@ -57,10 +60,13 @@ class UserRec extends React.Component {
 			.then((books) => {
 				if (!books) return;
 				const recs = books.map((book) => {
+					const authorTrimmed = book.AUTHOR.includes('/')
+						? book.AUTHOR.slice(0, book.AUTHOR.indexOf('/'))
+						: book.AUTHOR;
 					const b = {
 						isbn: book.ISBN,
 						title: book.TITLE,
-						author: book.AUTHOR,
+						author: authorTrimmed,
 						genre: book.GENRE,
 						language: book.LANGUAGE,
 						cover: book.COVER || placeholder,
@@ -81,7 +87,7 @@ class UserRec extends React.Component {
 			<>
 				<PageNavbar />
 				<Container className="justify-content-center p-3">
-					<Card className="info flex-column my-3">
+					<Card className="info justify-content-center my-3">
 						<Card.Body>
 							<h5>Readers Your Age Also Enjoyed</h5>
 							{this.state.ageRecs}

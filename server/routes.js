@@ -119,6 +119,7 @@ function getAuthorRec(req, res) {
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
     WHERE Book.author IN 
     (SELECT author FROM Book WHERE isbn = ${isbn})
+    AND Book.title <> (SELECT title FROM Book WHERE isbn = ${isbn})
     ORDER BY Rate.avg_rating DESC
   `;
 
@@ -140,6 +141,7 @@ function getGenreRec(req, res) {
     SELECT Book.*, Rate.avg_rating 
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
     WHERE genre IN (SELECT genre FROM Book WHERE isbn = ${isbn})
+    AND Book.title <> (SELECT title FROM Book WHERE isbn = ${isbn})
     ORDER BY Rate.avg_rating DESC
   `;
 
@@ -430,7 +432,7 @@ function getLocationRec(req, res) {
 	const query = `
       WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn),
       Res AS (
-        SELECT Book.*, Rate.avg_rating FROM 
+        SELECT DISTINCT Book.*, Rate.avg_rating FROM 
         Reader JOIN Ratings ON Reader.user_id = Ratings.user_id
         JOIN Book ON Ratings.isbn = Book.isbn
         JOIN Rate ON Rate.isbn = Book.isbn
@@ -472,7 +474,7 @@ function getAgeRec(req, res) {
     WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn),
     a AS (SELECT age FROM Reader WHERE Reader.user_id = ${user}),
     Res AS (
-      SELECT b.*, Rate.avg_rating 
+      SELECT DISTINCT b.*, Rate.avg_rating 
       FROM (SELECT Reader.age, Reader.user_id FROM Reader) r JOIN (
           Ratings JOIN (
               (SELECT * from Book) b JOIN 
