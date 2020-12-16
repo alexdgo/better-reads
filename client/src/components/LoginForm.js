@@ -225,7 +225,7 @@ export default class LoginForm extends React.Component {
             type="button"
             onClick={() => this.handleSubmit()}
           >
-            {this.state.mode}
+            {this.state.mode.toUpperCase()}
           </button>
           <br></br>
           <button
