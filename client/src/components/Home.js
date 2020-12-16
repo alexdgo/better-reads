@@ -80,12 +80,7 @@ export default class Dashboard extends React.Component {
   render() {
     return (
       <div className="Dashboard">
-<<<<<<< HEAD
-        <PageNavbar active="dashboard" />
-=======
-
         <PageNavbar active="home" />
->>>>>>> 59584c467c69705dce9371eaa6f7492f1ea70ed1
 
         <br></br>
         <div className="container movies-container">
@@ -94,7 +89,7 @@ export default class Dashboard extends React.Component {
             <div className="genres-container">{this.state.genres}</div>
           </div>
 
-          <br/>
+          <br />
           <div className="jumbotron">
             <div className="movies-container">
               <div className="results-container" id="results">
