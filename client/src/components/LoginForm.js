@@ -1,7 +1,3 @@
-/*
-Accounts lmd to aigc to cmrp taken
-*/
-
 import React from "react";
 import "../style/Login.css";
 
@@ -27,6 +23,7 @@ export default class LoginForm extends React.Component {
   }
 
   componentDidMount() {
+    console.log(window.localStorage.getItem("user_id"));
     this.setState({ mode: "Login" });
   }
 
@@ -138,20 +135,20 @@ export default class LoginForm extends React.Component {
             } else {
               alert("Logged!");
               console.log(res);
-              window.sessionStorage.setItem(
+              window.localStorage.setItem(
                 "user_id",
                 JSON.stringify(res.user_id)
               );
-              window.sessionStorage.setItem(
+              window.localStorage.setItem(
                 "username",
                 JSON.stringify(res.username)
               );
-              window.sessionStorage.setItem(
+              window.localStorage.setItem(
                 "location",
                 JSON.stringify(res.location)
               );
-              window.sessionStorage.setItem("age", JSON.stringify(res.age));
-              window.location.assign("/profile");
+              window.localStorage.setItem("age", JSON.stringify(res.age));
+              window.location.assign("/home");
             }
           });
         });
@@ -252,13 +249,7 @@ export default class LoginForm extends React.Component {
   }
 }
 
-export function redirectLogin() {
-  if (window.sessionStorage.getItem("username") === null) {
-    window.location.assign("/");
-  }
-}
-
 export function logout() {
-  window.sessionStorage.clear();
+  window.localStorage.clear();
   window.location.assign("/");
 }
