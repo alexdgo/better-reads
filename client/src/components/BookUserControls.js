@@ -6,7 +6,7 @@ import ReactStars from "react-rating-stars-component";
 
 export function BookUserControls({isbn, small}) {
     let [userRating, setUserRating] = useState();
-    const user = (window.sessionStorage.getItem('username')); 
+    const user = (window.sessionStorage.getItem('user_id')); 
     // console.log(user);
 
     useEffect(() => {

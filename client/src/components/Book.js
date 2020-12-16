@@ -15,10 +15,11 @@ class Book extends React.Component {
     constructor(props) {
         super(props);
         const isbn = this.props.match.params.isbn;
-        const user = window.sessionStorage.getItem("username"); 
+        const user = window.sessionStorage.getItem("user_id"); 
 
         this.state = {
             isbn: isbn,
+            user: user,
             authorRecs: [],
             genreRecs: [], 
             userRating: 0,
@@ -47,7 +48,6 @@ class Book extends React.Component {
 			.then((book) => {
 				if (!book) return;
                 
-                console.log("cover" , book.cover);
 				this.setState({
                     isbn: book.ISBN, 
                     title: book.TITLE, 
@@ -78,7 +78,7 @@ class Book extends React.Component {
     }
 
     getUserRating() {
-        fetch(`http://localhost:8081/getUserRating/${this.state.isbn}/${this.user}`, {
+        fetch(`http://localhost:8081/getUserRating/${this.state.isbn}/${this.state.user}`, {
 			method: 'GET',
 		})
 			.then((res) => res.json())
@@ -101,7 +101,8 @@ class Book extends React.Component {
 
     addToList() {
         // localStorage.getItem('myData');
-        fetch(`http://localhost:8081/addToList/${this.state.isbn}/${this.user}`, {
+        console.log(this.state.user)
+        fetch(`http://localhost:8081/addToList/${this.state.isbn}/${this.state.user}`, {
 			method: 'GET',
         })
 			.then((res) => {
