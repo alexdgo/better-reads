@@ -103,9 +103,10 @@ export default class LoginForm extends React.Component {
             resx.json().then(async (res) => {
               console.log(res);
               if (res.status === "false") {
-                alert("error");
+                alert("Username already exists.");
               } else {
-                alert("A verification email has been sent!");
+                alert("Account created! Try logging in.");
+                this.handleModeChange();
               }
             });
           });
@@ -133,10 +134,13 @@ export default class LoginForm extends React.Component {
           resx.json().then(async (res) => {
             console.log(res);
             if (res.status === "false") {
-              alert("non");
+              alert("Incorrect login info.");
             } else {
-              alert("logged!");
-              window.sessionStorage.setItem("username", this.state.username);
+              alert("Logged!");
+              window.sessionStorage.setItem("user_id", res.user_id);
+              window.sessionStorage.setItem("username", res.username);
+              window.sessionStorage.setItem("location", res.location);
+              window.sessionStorage.setItem("age", res.age);
               window.location.assign("/profile");
             }
           });

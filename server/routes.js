@@ -1,11 +1,9 @@
 var config = require("./db-config.js");
 var mysql = require("mysql");
-
 config.connectionLimit = 10;
 var connection = mysql.createPool(config);
 const oracledb = require("oracledb");
 oracledb.autoCommit = true;
-
 let generateConnectionProps = () => {
   const connectString = `
   (DESCRIPTION=
@@ -18,7 +16,6 @@ let generateConnectionProps = () => {
       (SID=BOOKSDB)
       )
     )`;
-
   return {
     user: "admin",
     password: "welovesusan",
@@ -30,7 +27,6 @@ async function runQuery(callback) {
   let connection;
   let result;
   const connectionProps = generateConnectionProps();
-
   try {
     connection = await oracledb.getConnection(connectionProps);
     result = await connection.execute("SELECT * FROM BOOK WHERE rownum = 0");
@@ -52,11 +48,9 @@ async function runQuery(callback) {
     }
   }
 }
-
 /* -------------------------------------------------- */
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
-
 const searchAll = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.title, Rate.avg_rating
@@ -101,7 +95,6 @@ const searchAll = (req, res) => {
     },
   ]);
 };
-
 const searchBooks = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.title, Rate.avg_rating
@@ -115,7 +108,6 @@ const searchBooks = (req, res) => {
     }
   });
 };
-
 const searchAuthors = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.title, Book.cover, Book.author, Rate.avg_rating
@@ -129,7 +121,6 @@ const searchAuthors = (req, res) => {
     }
   });
 };
-
 function getBook(req, res) {
   var isbn = req.params.isbn;
   // res.json({
@@ -156,20 +147,17 @@ function getBook(req, res) {
     price: 16.82,
   });
 }
-
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
   var user = req.params.user;
   console.log(`isbn: ${isbn} user: ${user}`);
   res.send("Added!");
 }
-
 function getAvgRating(req, res) {
   var isbn = req.params.isbn;
   console.log(`isbn: ${isbn}`);
   res.send({ rating: 3.5 });
 }
-
 function getAllGenres(req, res) {
   res.json([
     { genre: "comedy" },
@@ -189,27 +177,19 @@ async function addUser(req, res) {
   let connection;
   let result;
   const connectionProps = generateConnectionProps();
-
   const name = req.body.name;
-  const username = req.body.username.toLowerCase();
+  const username = req.body.username;
   const password = req.body.password;
   const location = req.body.location;
   const age = req.body.age;
-  var user_id = 0;
-  // for (var i = username.length - 1; i >= 0; i--) {
-  //   var char = username.charCodeAt(i);
-  //   user_id = user_id * 26 + (char >= 97) ? char - 48 : char - 87;
-  // }
+  const user_id = new Date().getTime();
   if (user_id >= 1 && user_id <= 62000) {
+    res.json({ status: "false" });
   } else {
     try {
       connection = await oracledb.getConnection(connectionProps);
       result = await connection.execute(
-        `INSERT INTO Reader (user_id, location, age) VALUES (${user_id}, '${location}', ${age})`
-      );
-      console.log(result);
-      result = await connection.execute(
-        `INSERT INTO Users (user_id, username, name, password) VALUES (${user_id}, '${username}', '${name}', '${password}')`
+        `INSERT INTO Reader (user_id, location, age, username, password) VALUES ('${user_id}', '${location}', ${age}, '${username}', '${password}')`
       );
       console.log(result);
       res.json({
@@ -237,45 +217,39 @@ async function addUser(req, res) {
   }
 }
 
-// Get user
-function getUser(req, res) {
+// Log user
+async function getUser(req, res) {
+  let connection;
+  let result;
+  const connectionProps = generateConnectionProps();
   const username = req.body.username;
-  if (users.has(username)) {
-    const info = users.get(username);
+  const password = req.body.password;
+  try {
+    connection = await oracledb.getConnection(connectionProps);
+    result = await connection.execute(
+      `SELECT * FROM Reader WHERE username = '${username}'`
+    );
+    console.log(result);
     res.json({
       status: "true",
-      username: username,
-      email: info.email,
-      password: info.password,
+      user_id: result.metaData[0],
+      username: result.metaData[3],
+      password: result.metaData[4],
+      location: result.metaData[1],
+      age: result.metaData[2],
     });
-  } else {
-    res.json({
-      status: "false",
-    });
-  }
-}
-
-// Log user
-function getUser(req, res) {
-  const username = req.body.username;
-  if (users.has(username)) {
-    const info = users.get(username);
-    if (info.password === req.body.password) {
-      res.json({
-        status: "true",
-        username: username,
-        email: info.email,
-        password: info.password,
-      });
-    } else {
-      res.json({
-        status: "false",
-      });
+  } catch (err) {
+    console.error(err);
+    res.json({ status: "false" });
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+        return -1;
+      }
     }
-  } else {
-    res.json({
-      status: "false",
-    });
   }
 }
 
@@ -297,7 +271,6 @@ function getUserBooks(req, res) {
     books: allBooks,
   });
 }
-
 function getTopInGenre(req, res) {
   res.json([
     {
@@ -329,7 +302,6 @@ function getTopInGenre(req, res) {
     },
   ]);
 }
-
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   addUser: addUser,
