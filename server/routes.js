@@ -3,13 +3,59 @@ var mysql = require("mysql");
 
 config.connectionLimit = 10;
 var connection = mysql.createPool(config);
+const oracledb = require("oracledb");
+oracledb.autoCommit = true;
+
+let generateConnectionProps = () => {
+  const connectString = `
+  (DESCRIPTION=
+    (ADDRESS=
+      (PROTOCOL=TCP)
+      (HOST=cis550proj.cgn43zyqcysl.us-east-1.rds.amazonaws.com)
+      (PORT=1521)
+    )
+    (CONNECT_DATA=
+      (SID=BOOKSDB)
+      )
+    )`;
+
+  return {
+    user: "admin",
+    password: "welovesusan",
+    connectString: connectString,
+  };
+};
+async function runQuery(callback) {
+  //   if (_debugMode) console.log(`oracledb running query: ${query}`);
+  let connection;
+  let result;
+  const connectionProps = generateConnectionProps();
+
+  try {
+    connection = await oracledb.getConnection(connectionProps);
+    result = await connection.execute("SELECT * FROM BOOK WHERE rownum = 0");
+    console.log(result);
+    // console.log(`runQuery > result : ${JSON.stringify(result)}`);
+    // console.log(result.rows[0]['MAX(WID)']);
+  } catch (err) {
+    console.error(err);
+    return -1;
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+        // callback(result);
+      } catch (err) {
+        console.error(err);
+        return -1;
+      }
+    }
+  }
+}
 
 /* -------------------------------------------------- */
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
-
-let users = new Map();
-let books = new Map();
 
 const searchAll = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
@@ -139,22 +185,55 @@ function getAllGenres(req, res) {
   ]);
 }
 // Create new user
-function addUser(req, res) {
-  const username = req.body.username;
-  const email = req.body.email;
+async function addUser(req, res) {
+  let connection;
+  let result;
+  const connectionProps = generateConnectionProps();
+
+  const name = req.body.name;
+  const username = req.body.username.toLowerCase();
   const password = req.body.password;
-  if (users.has(username)) {
-    res.json({
-      status: "false",
-    });
+  const location = req.body.location;
+  const age = req.body.age;
+  var user_id = 0;
+  // for (var i = username.length - 1; i >= 0; i--) {
+  //   var char = username.charCodeAt(i);
+  //   user_id = user_id * 26 + (char >= 97) ? char - 48 : char - 87;
+  // }
+  if (user_id >= 1 && user_id <= 62000) {
   } else {
-    users.set(username, { email: email, password: password });
-    res.json({
-      status: "true",
-      username: username,
-      email: email,
-      password: password,
-    });
+    try {
+      connection = await oracledb.getConnection(connectionProps);
+      result = await connection.execute(
+        `INSERT INTO Reader (user_id, location, age) VALUES (${user_id}, '${location}', ${age})`
+      );
+      console.log(result);
+      result = await connection.execute(
+        `INSERT INTO Users (user_id, username, name, password) VALUES (${user_id}, '${username}', '${name}', '${password}')`
+      );
+      console.log(result);
+      res.json({
+        status: "true",
+        user_id: user_id,
+        name: name,
+        username: username,
+        password: password,
+        location: location,
+        age: age,
+      });
+    } catch (err) {
+      console.error(err);
+      res.json({ status: "false" });
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+          return -1;
+        }
+      }
+    }
   }
 }
 
