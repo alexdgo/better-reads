@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 import GenreButton from './GenreButton';
 import DashboardBookRow from './DashboardBookRow';
+import { BookIcon } from './BookIcon';
+import placeholder from '../files/placeholder.png';
 
 export default class Dashboard extends React.Component {
   constructor(props) {
@@ -31,7 +33,7 @@ export default class Dashboard extends React.Component {
         // Map each genreObj in genreList to an HTML element:
         // A button which triggers the showMovies function for each genre.
         let genreDivs = genreList.map((genreObj, i) =>
-          <GenreButton id={"button-" + genreObj.genre} onClick={() => this.showBooks(genreObj.genre)} genre={genreObj.genre} />
+          <GenreButton id={"button-" + genreObj.GENRE} onClick={() => this.showBooks(genreObj.GENRE)} genre={genreObj.GENRE} />
         );
         // this.showBooks();
         // Set the state of the genres list to the value returned by the HTTP response from the server.
@@ -56,15 +58,31 @@ export default class Dashboard extends React.Component {
         console.log(bookList);
         // Map each genreObj in genreList to an HTML element:
         // A button which triggers the showMovies function for each genre.
-        let bookDivs = bookList.map((bookObj, i) =>
-        //   <DashboardBookGrid rows={bookRows}/>
-        <DashboardBookRow id={"row-" + bookObj.title + bookObj.rating} book={bookObj}/>
-        );
+        //let bookDivs = bookList.map((bookObj, i) =>
+        
+        // <DashboardBookRow id={"row-" + bookObj.title + bookObj.rating} book={bookObj}/>
+        // );
+        const recs = bookList.map(book => {
+            const b = {
+                isbn: book.ISBN, 
+                title: book.TITLE, 
+                author: book.AUTHOR,
+                genre: book.GENRE,
+                language: book.LANGUAGE,
+                cover: book.COVER || placeholder, 
+                publisher: book.PUBLISHER,
+                year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                price: book.PRICE,
+                num_pages: book.NUM_PAGES,
+            }
+            return <BookIcon {...b} />
+        });
+        this.setState({books: recs})
 
         // Set the state of the genres list to the value returned by the HTTP response from the server.
-        this.setState({
-            books: bookDivs
-        })
+        // this.setState({
+        //     books: bookDivs
+        // })
       })
       .catch(err => console.log(err))	// Print the error if there is one.
   }
