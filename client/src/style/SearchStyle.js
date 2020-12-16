@@ -13,6 +13,7 @@ export const SearchWrapper = s.nav`
 export const ResultWrapper = s.div`
   display: ${(props) => (props.showResult ? "block" : "none")};
   height: 100%;
+  overflow: hidden;
   top: 0;
   left: 0;
   right: 0;
@@ -22,7 +23,8 @@ export const Overlay = s.div`
   content: " ";
   z-index: 50;
   display: block;
-  position: absolute;
+  position: fixed; 
+  overflow-y: scroll;
   height: 100%;
   top: 0;
   left: 0;

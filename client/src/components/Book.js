@@ -4,8 +4,6 @@ import {Container, Row, Col, Media, Button, Card, Carousel} from 'react-bootstra
 import { withRouter } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
 import '../style/book.css';
-import { BookCard } from '../style/SearchStyle'
-import { Link } from 'react-router-dom'
 import { BookIcon } from './BookIcon';
 import { BookRating } from './BookRating';
 import { BookUserControls } from './BookUserControls';

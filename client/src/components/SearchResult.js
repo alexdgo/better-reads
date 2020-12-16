@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { BookContext } from './App'
 import { ResultWrapper, Overlay, ResultBlock, BookCard } from '../style/SearchStyle'
 import placeholder from '../files/placeholder.png';
-import { BookIcon } from './BookIcon';
 
 
 const SearchResult = () => {
