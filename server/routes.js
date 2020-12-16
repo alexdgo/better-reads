@@ -150,17 +150,30 @@ function getGenreRec(req, res) {
 // fix error handling
 function addToReadingList(req, res) {
   var isbn = req.params.isbn;
-  var user = req.params.user;
+  var user = req.params.user || 1;
   var query = `
     INSERT INTO ReadingList
     VALUES (${isbn}, ${user})
   `;
 
   runQuery(query, result => {
-    res.status(200).json({res: result});
-  }, error => {
-    res.status(500).json({error: error});
+    console.log(result)
   })
+}
+
+function addRating(req, res) {
+  const isbn = req.body.isbn;
+  const user = req.body.user; 
+  const rating = req.body.rating;
+
+  const query = `
+    INSERT INTO Ratings(isbn, user_id, rating)
+    VALUES (${isbn}, ${user}, ${rating})
+  `;
+
+  runQuery(query, result => {
+    console.log(result)
+  });
 }
 
 function getAvgRating(req, res) {
@@ -335,6 +348,7 @@ module.exports = {
   searchAuthors: searchAuthors,
   getBook: getBook,
   addToReadingList: addToReadingList,
+  addRating: addRating,
   getAuthorRec: getAuthorRec,
   getGenreRec: getGenreRec,
   getAvgRating: getAvgRating,

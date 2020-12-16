@@ -1,5 +1,6 @@
 const oracledb = require("oracledb");
 oracledb.outFormat = oracledb.OBJECT;
+oracledb.autoCommit = true;
 
 let generateConnectionProps = () => {
   const connectString = `

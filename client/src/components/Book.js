@@ -27,18 +27,10 @@ class Book extends React.Component {
             genreRecs: [], 
             userRating: 0,
         }
-
-        this.addRating = this.addRating.bind(this);
-        this.addToList = this.addToList.bind(this);
-        this.getUserRating = this.getUserRating.bind(this);
-        this.getAuthorRec = this.getAuthorRec.bind(this);
-        this.render = this.render.bind(this);
     }
 
     componentDidMount() {
         this.getBook();
-        this.getRating();
-        this.getUserRating();
         this.getAuthorRec();
         this.getGenreRec();
     }
@@ -66,68 +58,6 @@ class Book extends React.Component {
                 });
 			})
 			.catch((err) => console.log(err));
-    }
-
-    getRating() {
-        fetch('http://localhost:8081/getRating/' + this.state.isbn, {
-			method: 'GET',
-		})
-			.then((res) => res.json())
-			.then((rating) => {
-				if (!rating) return;
-                
-				this.setState(rating);
-			})
-			.catch((err) => console.log(err));
-    }
-
-    getUserRating() {
-        fetch(`http://localhost:8081/getUserRating/${this.state.isbn}/${this.user}`, {
-			method: 'GET',
-		})
-			.then((res) => res.json())
-			.then((userRating) => {
-                if (!userRating) return;
-                
-                var stars = <ReactStars 
-                    count={5}
-                    value={userRating.rating}
-                    isHalf={true}
-                    size={24}
-                    activeColor={"#ff0019"}
-                    onChange={this.addRating}
-                />;
-
-                this.setState({userRating : stars});
-			})
-			.catch((err) => console.log(err));
-    }
-
-    addToList() {
-        // localStorage.getItem('myData');
-        fetch(`http://localhost:8081/addToList/${this.state.isbn}/${this.user}`, {
-			method: 'GET',
-        })
-			.then((res) => {
-                console.log(res)
-                alert("Added to List!")
-			})
-			.catch((err) => console.log(err));
-    }
-
-    addRating(rating) {
-        const data = { isbn: this.state.isbn, rating: rating, user: 1}
-        fetch(`http://localhost:8081/addRating`, {
-            method: 'POST',
-            body: JSON.stringify(data),
-        })
-        // .then((res) => res.json())
-        .then(data => {
-            console.log(data);
-            alert("Added rating!");
-            this.setState({userRating: data.rating});
-        })
-        .catch((err) => console.log(err));
     }
 
     getAuthorRec() {
