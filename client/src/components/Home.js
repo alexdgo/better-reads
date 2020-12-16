@@ -6,7 +6,6 @@ import GenreButton from "./GenreButton";
 import DashboardBookRow from "./DashboardBookRow";
 import { BookIcon } from "./BookIcon";
 import placeholder from "../files/placeholder.png";
-import { redirectLogin } from "./LoginForm";
 
 export default class Dashboard extends React.Component {
   constructor(props) {
@@ -108,7 +107,7 @@ export default class Dashboard extends React.Component {
           <div className="jumbotron">
             <div className="movies-container">
               <div className="results-container" id="results">
-                <div class="row">{this.state.books}</div>
+                <div className="row">{this.state.books}</div>
               </div>
             </div>
           </div>
