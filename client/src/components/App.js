@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Book from "./Book";
 import SearchResult from "./SearchResult";
 import Home from "./Home";
-import Login from "../Login";
-import Profile from "../Profile";
+import Login from "./Login";
+import Profile from "./Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
+import SearchBar from "./SearchBar";
+import PageNavbar from "./PageNavbar";
 
 export const BookContext = createContext();
 

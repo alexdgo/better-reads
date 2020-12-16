@@ -1,9 +1,16 @@
 import React from 'react';
-import SearchBar from './SearchBar'
-import {Container, Row, Col, Media, Button, Card} from 'react-bootstrap';
+import PageNavbar from './PageNavbar'
+import {Container, Row, Col, Media, Button, Card, Carousel} from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
 import '../style/book.css';
+import { BookCard } from '../style/SearchStyle'
+import { Link } from 'react-router-dom'
+import { BookIcon } from './BookIcon';
+import { BookRating } from './BookRating';
+import { BookUserControls } from './BookUserControls';
+import placeholder from '../files/placeholder.png';
+
 
 // TODO: book recs
 // TODO: check if user has previous rating
@@ -12,28 +19,28 @@ class Book extends React.Component {
     constructor(props) {
         super(props);
         const isbn = this.props.match.params.isbn;
+        const user = window.sessionStorage.getItem("username"); 
+
         this.state = {
             isbn: isbn,
-            // title: null,
-            // author: "", 
-            // language: "",
-            // num_pages: 0,
-            // publisher: "",
-            // year_published: 0, 
-            // cover: "",
-            // genre: null,
-            // format: "",
-            // price: 0, 
-            // rating: null
+            authorRecs: [],
+            genreRecs: [], 
+            userRating: 0,
         }
 
         this.addRating = this.addRating.bind(this);
         this.addToList = this.addToList.bind(this);
+        this.getUserRating = this.getUserRating.bind(this);
+        this.getAuthorRec = this.getAuthorRec.bind(this);
+        this.render = this.render.bind(this);
     }
 
     componentDidMount() {
         this.getBook();
         this.getRating();
+        this.getUserRating();
+        this.getAuthorRec();
+        this.getGenreRec();
     }
     
     getBook() {
@@ -44,7 +51,19 @@ class Book extends React.Component {
 			.then((book) => {
 				if (!book) return;
                 
-				this.setState(book);
+                console.log("cover" , book.cover);
+				this.setState({
+                    isbn: book.ISBN, 
+                    title: book.TITLE, 
+                    author: book.AUTHOR,
+                    genre: book.GENRE,
+                    language: book.LANGUAGE,
+                    cover: book.COVER || placeholder, 
+                    publisher: book.PUBLISHER,
+                    year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                    price: book.PRICE && book.PRICE.toFixed(2),
+                    num_pages: book.NUM_PAGES,
+                });
 			})
 			.catch((err) => console.log(err));
     }
@@ -62,9 +81,31 @@ class Book extends React.Component {
 			.catch((err) => console.log(err));
     }
 
+    getUserRating() {
+        fetch(`http://localhost:8081/getUserRating/${this.state.isbn}/${this.user}`, {
+			method: 'GET',
+		})
+			.then((res) => res.json())
+			.then((userRating) => {
+                if (!userRating) return;
+                
+                var stars = <ReactStars 
+                    count={5}
+                    value={userRating.rating}
+                    isHalf={true}
+                    size={24}
+                    activeColor={"#ff0019"}
+                    onChange={this.addRating}
+                />;
+
+                this.setState({userRating : stars});
+			})
+			.catch((err) => console.log(err));
+    }
+
     addToList() {
         // localStorage.getItem('myData');
-        fetch(`http://localhost:8081/addToList/${this.state.isbn}/1`, {
+        fetch(`http://localhost:8081/addToList/${this.state.isbn}/${this.user}`, {
 			method: 'GET',
         })
 			.then((res) => {
@@ -80,10 +121,75 @@ class Book extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
         })
-            // .then((res) => res.json())
-			.then(data => {
-                console.log(data)
-                alert("Added rating!")
+        // .then((res) => res.json())
+        .then(data => {
+            console.log(data);
+            alert("Added rating!");
+            this.setState({userRating: data.rating});
+        })
+        .catch((err) => console.log(err));
+    }
+
+    getAuthorRec() {
+        fetch('http://localhost:8081/authorRec/' + this.state.isbn, {
+			method: 'GET',
+		})
+			.then((res) => res.json())
+			.then((books) => {
+				if (!books) return;
+				const recs = books.map(book => {
+                    const b = {
+                        isbn: book.ISBN, 
+                        title: book.TITLE, 
+                        author: book.AUTHOR,
+                        genre: book.GENRE,
+                        language: book.LANGUAGE,
+                        cover: book.COVER || placeholder, 
+                        publisher: book.PUBLISHER,
+                        year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                        price: book.PRICE,
+                        num_pages: book.NUM_PAGES,
+                    }
+                    return <BookIcon {...b} />
+                    // <div className="carousel-item active">
+                    // <Link key={b.isbn} to={`/book/${b.isbn}`}>
+                    //     <img 
+                    //         height={150}
+                    //         className="p-1"
+                    //         src={b.cover}
+                    //         alt={b.title}
+                    //     />
+                    // </Link>
+                    // </div>
+                });
+                this.setState({authorRecs: recs})
+			})
+			.catch((err) => console.log(err));
+    }
+
+    getGenreRec() {
+        fetch('http://localhost:8081/genreRec/' + this.state.isbn, {
+			method: 'GET',
+		})
+			.then((res) => res.json())
+			.then((books) => {
+                if (!books) return;
+				const recs = books.map(book => {
+                    const b = {
+                        isbn: book.ISBN, 
+                        title: book.TITLE, 
+                        author: book.AUTHOR,
+                        genre: book.GENRE,
+                        language: book.LANGUAGE,
+                        cover: book.COVER || placeholder, 
+                        publisher: book.PUBLISHER,
+                        year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                        price: book.PRICE && book.PRICE.toFixed(2),
+                        num_pages: book.NUM_PAGES,
+                    }
+                    return <BookIcon {...b} />
+                });
+                this.setState({genreRecs: recs})
 			})
 			.catch((err) => console.log(err));
     }
@@ -91,7 +197,7 @@ class Book extends React.Component {
     render() {
         return (
             <div>
-            <SearchBar/>
+            <PageNavbar/>
             <Container className="justify-content-center p-3">
                 <Media className="align-items-center justify-content-center">
                     <img 
@@ -101,28 +207,13 @@ class Book extends React.Component {
                         alt="cover"
                     />
                     <Media.Body className="">
-                        <h2 className="title">{this.state.title}</h2>
-                        <h4>by {this.state.author}</h4>
-                        {this.state.rating &&
-                            <ReactStars 
-                                count={5}
-                                value={this.state.rating}
-                                isHalf={true}
-                                size={24}
-                            />
-                        }
-                        <Card className="userInfo flex-column mt-3 p-2 px-5 align-items-center">
-                            <Button className="" variant="outline-primary" onClick={() => this.addToList()}>Add to Reading List</Button>
-                            {/* <Row className="align-items-center"> */}
-                                <div className="caption">Your Rating</div> 
-                                <ReactStars 
-                                    count={5}
-                                    isHalf={true}
-                                    size={24}
-                                    activeColor={"#ff0019"}
-                                    onChange={this.addRating}
-                                />
-                            {/* </Row> */}
+                        <div className="info">
+                            <h2 className="title">{this.state.title}</h2>
+                            <h4>by {this.state.author}</h4>
+                            <BookRating isbn={this.state.isbn} size = {24}/>
+                        </div>
+                        <Card className="userInfo flex-column mt-3 p-2 px-4 align-items-center">
+                            <BookUserControls isbn={this.state.isbn} />
                         </Card>
                     </Media.Body>
                 </Media>
@@ -176,7 +267,29 @@ class Book extends React.Component {
                         }
                     </Card.Body>
                 </Card>
-            {/* </Row> */}
+            <Card className="rec">
+                <Card.Body>
+                    {/* <h4><b>YOU MAY ALSO ENJOY</b></h4> */}
+                    <h5>More By This Author</h5>
+                    <div className="carousel slide" data-ride="carousel">
+                    {/* <Carousel> */}
+                        <div class="carousel-inner">
+                        {this.state.authorRecs}
+                        </div>
+                    {/* </Carousel> */}
+                    </div>
+                    <hr />
+                    <h5>More in This Genre</h5>
+                    {/* <Carousel > */}
+                    <div className="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                        {this.state.genreRecs}
+                         </div>
+                    </div>
+                    {/* </Carousel> */}
+
+                </Card.Body>
+            </Card>
             </Container>
 
             </div>

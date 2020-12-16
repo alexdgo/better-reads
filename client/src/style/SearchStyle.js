@@ -5,13 +5,9 @@ import s from 'styled-components'
 
 export const SearchWrapper = s.nav`
   font-size: 80%;
-  position: fixed;
+  position: relative;
   z-index: 8;
   width: 100%;
-  height: 5rem;
-  padding: 1rem;
-  background-color: #D3D3D3;
-  padding-left: 10%
 `
 
 export const ResultWrapper = s.div`
@@ -24,7 +20,7 @@ export const ResultWrapper = s.div`
 
 export const Overlay = s.div`
   content: " ";
-  z-index: 10;
+  z-index: 50;
   display: block;
   position: absolute;
   height: 100%;

@@ -1,4 +1,6 @@
 import React from "react";
+import PageNavBar from './PageNavbar'
+import { Wrapper } from '../style/shared'
 
 export default class Profile extends React.Component {
   constructor(props) {
@@ -35,10 +37,13 @@ export default class Profile extends React.Component {
 
   render() {
     return (
-      <div>
+      <>
+      <PageNavBar/>
+      <Wrapper>
         <h2>My book</h2>
-        <div>{this.state.readBooks}</div>
-      </div>
+        <div>{this.state.readBooks.slice(10)}</div>
+      </Wrapper>
+      </>
     );
   }
 }
