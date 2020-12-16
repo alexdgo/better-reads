@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Container, Button } from "react-bootstrap";
+import { Card, Container } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 import PageNavbar from "./PageNavbar";
 import placeholder from "../files/placeholder.png";

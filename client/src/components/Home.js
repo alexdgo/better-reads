@@ -3,7 +3,6 @@ import "../style/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PageNavbar from "./PageNavbar";
 import GenreButton from "./GenreButton";
-import DashboardBookRow from "./DashboardBookRow";
 import { BookIcon } from "./BookIcon";
 import placeholder from "../files/placeholder.png";
 
@@ -110,10 +109,10 @@ export default class Dashboard extends React.Component {
             <div className="movies-container">
               <div className="results-container" id="results">
                 {/* <Carousel > */}
-							<div className="carousel slide" data-ride="carousel">
-								<div class="carousel-inner">{this.state.books}</div>
-							</div>
-							{/* </Carousel> */}
+                <div className="carousel slide" data-ride="carousel">
+                  <div class="carousel-inner">{this.state.books}</div>
+                </div>
+                {/* </Carousel> */}
                 {/* <div class="row">{this.state.books}</div> */}
               </div>
             </div>
