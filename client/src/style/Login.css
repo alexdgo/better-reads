@@ -11,6 +11,7 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   height: 100%;
+  background-image: linear-gradient(to right, #f8a73f, #db5c01);
 }
 
 .LoginPage {
@@ -19,14 +20,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #fafafa;
 }
+
 .LoginForm {
   width: 350px;
-  margin: 0 auto;
+  margin: 60px;
   border: 1px solid #ddd;
   padding: 2rem;
   background: #ffffff;
+  box-shadow: 1px 1px 10px #888888;
 }
 #LoginForm-input {
   background: #fafafa;
@@ -38,7 +40,7 @@ body {
   margin-bottom: 1rem;
 }
 #LoginForm-button {
-  background: #69d2e7;
+  background: #cbb796;
   border: 1px solid #ddd;
   color: #ffffff;
   padding: 10px;

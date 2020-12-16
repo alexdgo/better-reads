@@ -257,3 +257,8 @@ export function redirectLogin() {
     window.location.assign("/");
   }
 }
+
+export function logout() {
+  window.sessionStorage.clear();
+  window.location.assign("/");
+}
