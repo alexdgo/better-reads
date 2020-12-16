@@ -6,15 +6,14 @@ export default class Login extends React.Component {
     super(props);
     this.state = {
       mode: "",
-      name: "",
       username: "",
       password: "",
       location: "",
       age: "",
+      status: "",
     };
 
     this.handleModeChange = this.handleModeChange.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLocationChange = this.handleLocationChange.bind(this);
@@ -34,16 +33,12 @@ export default class Login extends React.Component {
       this.setState({ mode: "Login" });
     }
     this.setState({
-      name: "",
       username: "",
       password: "",
       location: "",
       age: "",
+      status: "",
     });
-  }
-
-  handleNameChange(event) {
-    this.setState({ name: event.target.value });
   }
 
   handleUsernameChange(event) {
@@ -65,18 +60,19 @@ export default class Login extends React.Component {
   async handleSubmit() {
     if (this.state.mode === "Register") {
       if (
-        this.state.name &&
         this.state.username &&
         this.state.password &&
         this.state.location &&
         this.state.age
       ) {
         if (isNaN(this.state.age)) {
-          alert(`"${this.state.age}" is not a valid age.`);
+          this.setState({ status: `"${this.state.age}" is not a valid age.` });
         } else if (!this.state.username.match(/^[a-zA-Z0-9]+$/)) {
-          alert(`Please enter an alphanumeric username.`);
+          this.setState({ status: "Please enter an alphanumeric username." });
         } else if (this.state.username.length > 20) {
-          alert(`Please enter a username shorter than 20 characters.`);
+          this.setState({
+            status: "Please enter a username shorter than 20 characters.",
+          });
         } else {
           const requestOptions = {
             method: "POST",
@@ -85,7 +81,6 @@ export default class Login extends React.Component {
               Accept: "application/json",
             },
             body: JSON.stringify({
-              name: this.state.name,
               username: this.state.username,
               password: this.state.password,
               location: this.state.location,
@@ -100,16 +95,16 @@ export default class Login extends React.Component {
             resx.json().then(async (res) => {
               console.log(res);
               if (res.status === "false") {
-                alert("Username already exists.");
+                this.setState({ status: "Username already exists." });
               } else {
-                alert("Account created! Try logging in.");
                 this.handleModeChange();
+                this.setState({ status: "Account created! Try logging in." });
               }
             });
           });
         }
       } else {
-        alert("All fields are required!");
+        this.setState({ status: "All fields required!" });
       }
     } else if ((this.state.mode = "Login")) {
       if (this.state.username && this.state.password) {
@@ -129,7 +124,9 @@ export default class Login extends React.Component {
             resx.json().then(async (res) => {
               console.log(res);
               if (res.status === "false") {
-                alert("Incorrect login info.");
+                this.setState({
+                  status: "Incorrect username and/or password.",
+                });
               } else {
                 console.log(res);
                 window.localStorage.setItem(
@@ -151,7 +148,7 @@ export default class Login extends React.Component {
           }
         );
       } else {
-        alert("All fields are required!");
+        this.setState({ status: "Incorrect username and/or password." });
       }
     }
   }
@@ -166,19 +163,8 @@ export default class Login extends React.Component {
         <div className="LoginForm">
           <h2 className="LoginForm-title">{this.state.mode}</h2>
           <br></br>
+          {this.state.status !== "" && <p id="status">{this.state.status}</p>}
           <form>
-            {this.state.mode === "Register" && (
-              <input
-                id="LoginForm-input"
-                className="LoginForm-elt"
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={this.state.name}
-                onChange={this.handleNameChange}
-              />
-            )}
-            {this.state.mode === "Register" && <br></br>}
             <input
               id="LoginForm-input"
               className="LoginForm-elt"

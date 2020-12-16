@@ -320,7 +320,6 @@ function getAllGenres(req, res) {
 }
 // Create new user
 async function addUser(req, res) {
-  const name = req.body.name;
   const username = req.body.username;
   const password = req.body.password;
   const location = req.body.location;
@@ -337,7 +336,6 @@ async function addUser(req, res) {
         res.json({
           status: "true",
           user_id: user_id,
-          name: name,
           username: username,
           password: password,
           location: location,

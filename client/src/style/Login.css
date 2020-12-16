@@ -30,6 +30,11 @@ body {
   background: #ffffff;
   box-shadow: 1px 1px 10px #888888;
 }
+
+#status {
+  color: red;
+}
+
 #LoginForm-input {
   background: #fafafa;
   border: 1px solid #eeeeee;
