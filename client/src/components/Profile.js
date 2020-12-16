@@ -60,10 +60,13 @@ export default class Profile extends React.Component {
             <Col>
               <h2>Reading List</h2>
               {this.state.toReadBooks.map((book) => {
+                const authorTrimmed = book.AUTHOR.includes("/")
+                  ? book.AUTHOR.slice(0, book.AUTHOR.indexOf("/"))
+                  : book.AUTHOR;
                 const d = {
                   isbn: book.ISBN,
                   title: book.TITLE,
-                  author: book.AUTHOR,
+                  author: authorTrimmed,
                   genre: book.GENRE,
                   language: book.LANGUAGE,
                   cover: book.COVER || placeholder,
@@ -83,10 +86,13 @@ export default class Profile extends React.Component {
             <Col>
               <h2>Liked</h2>
               {this.state.hasReadBooks.map((book) => {
+                const authorTrimmed = book.AUTHOR.includes("/")
+                  ? book.AUTHOR.slice(0, book.AUTHOR.indexOf("/"))
+                  : book.AUTHOR;
                 const d = {
                   isbn: book.ISBN,
                   title: book.TITLE,
-                  author: book.AUTHOR,
+                  author: authorTrimmed,
                   genre: book.GENRE,
                   language: book.LANGUAGE,
                   cover: book.COVER || placeholder,

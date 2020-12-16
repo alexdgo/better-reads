@@ -3,7 +3,7 @@ import "../style/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PageNavbar from "./PageNavbar";
 import GenreButton from "./GenreButton";
-//import DashboardBookRow from "./DashboardBookRow";
+import DashboardBookRow from "./DashboardBookRow";
 import { BookIcon } from "./BookIcon";
 import placeholder from "../files/placeholder.png";
 
@@ -66,10 +66,13 @@ export default class Dashboard extends React.Component {
         // <DashboardBookRow id={"row-" + bookObj.title + bookObj.rating} book={bookObj}/>
         // );
         const recs = bookList.map((book) => {
+          const authorTrimmed = book.AUTHOR.includes("/")
+            ? book.AUTHOR.slice(0, book.AUTHOR.indexOf("/"))
+            : book.AUTHOR;
           const b = {
             isbn: book.ISBN,
             title: book.TITLE,
-            author: book.AUTHOR,
+            author: authorTrimmed,
             genre: book.GENRE,
             language: book.LANGUAGE,
             cover: book.COVER || placeholder,
@@ -102,12 +105,11 @@ export default class Dashboard extends React.Component {
             <div className="h5">Top Books</div>
             <div className="genres-container">{this.state.genres}</div>
           </div>
-
           <br />
           <div className="jumbotron">
             <div className="movies-container">
               <div className="results-container" id="results">
-                <div className="row">{this.state.books}</div>
+                <div class="row">{this.state.books}</div>
               </div>
             </div>
           </div>
