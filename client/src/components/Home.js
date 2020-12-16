@@ -3,7 +3,7 @@ import "../style/home.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PageNavbar from "./PageNavbar";
 import GenreButton from "./GenreButton";
-import DashboardBookRow from "./DashboardBookRow";
+//import DashboardBookRow from "./DashboardBookRow";
 import { BookIcon } from "./BookIcon";
 import placeholder from "../files/placeholder.png";
 
