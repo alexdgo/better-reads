@@ -284,18 +284,16 @@ function getUserRating(req, res) {
   );
 }
 function getAllGenres(req, res) {
-  res.json([
-    { genre: "comedy" },
-    { genre: "fiction" },
-    { genre: "horror" },
-    { genre: "mystery" },
-    { genre: "biography" },
-    { genre: "thriller" },
-    { genre: "historical" },
-    { genre: "nonfiction" },
-    { genre: "short story" },
-    { genre: "novel" },
-  ]);
+  const query = `
+    WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+    SELECT DISTINCT BOOK.genre 
+    FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+  `;
+
+  runQuery(query, result => {
+    console.log(result.rows);
+    res.json(result.rows);
+  })
 }
 // Create new user
 async function addUser(req, res) {
@@ -379,35 +377,55 @@ function getUserBooks(req, res) {
   });
 }
 function getTopInGenre(req, res) {
-  res.json([
-    {
-      isbn: 9780345453747,
-      title: "Thinking, Fast and Slow",
-      author: "Douglas Adams",
-      language: "eng",
-      num_pages: 815,
-      publisher: "Del Rey Books",
-      year_published: 2002,
-      cover:
-        "https://images-na.ssl-images-amazon.com/images/I/41wI53OEpCL._SX332_BO1,204,203,200_.jpg",
-      format: "Paperback",
-      genre: "Science-Fiction-Fantasy-Horror",
-      price: 16.82,
-    },
-    {
-      isbn: 9780345453747,
-      title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-      author: "Douglas Adams",
-      language: "eng",
-      num_pages: 815,
-      publisher: "Del Rey Books",
-      year_published: 2002,
-      cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-      format: "Paperback",
-      genre: "Science-Fiction-Fantasy-Horror",
-      price: 16.82,
-    },
-  ]);
+  const genre = req.params.genre;
+  console.log(genre);
+  const query = `
+  WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn),
+  b AS (SELECT Book.*, Rate.avg_rating  
+      FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+      WHERE Book.genre = '${genre}'
+      ORDER BY Rate.avg_rating DESC
+     )
+      SELECT *
+      FROM b
+      WHERE rownum <= 10
+  `;
+
+  runQuery(query, result => {
+    if (result.rows) {
+      console.log(result.rows);
+      res.json(result.rows);
+    }
+  })
+  // res.json([
+  //   {
+  //     isbn: 9780345453747,
+  //     title: "Thinking, Fast and Slow",
+  //     author: "Douglas Adams",
+  //     language: "eng",
+  //     num_pages: 815,
+  //     publisher: "Del Rey Books",
+  //     year_published: 2002,
+  //     cover:
+  //       "https://images-na.ssl-images-amazon.com/images/I/41wI53OEpCL._SX332_BO1,204,203,200_.jpg",
+  //     format: "Paperback",
+  //     genre: "Science-Fiction-Fantasy-Horror",
+  //     price: 16.82,
+  //   },
+  //   {
+  //     isbn: 9780345453747,
+  //     title: "The Ultimate Hitchhiker's Guide to the Galaxy",
+  //     author: "Douglas Adams",
+  //     language: "eng",
+  //     num_pages: 815,
+  //     publisher: "Del Rey Books",
+  //     year_published: 2002,
+  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
+  //     format: "Paperback",
+  //     genre: "Science-Fiction-Fantasy-Horror",
+  //     price: 16.82,
+  //   },
+  // ]);
 }
 // The exported functions, which can be accessed in index.js.
 module.exports = {
