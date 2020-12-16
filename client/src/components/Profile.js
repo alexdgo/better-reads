@@ -33,6 +33,7 @@ export default class Profile extends React.Component {
             alert("error");
           } else {
             this.setState({ toReadBooks: res });
+            console.log(res);
           }
         });
       }
@@ -75,6 +76,7 @@ export default class Profile extends React.Component {
                     book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
                   price: book.PRICE && book.PRICE.toFixed(2),
                   num_pages: book.NUM_PAGES,
+                  avg_rating: book.RATING / 2,
                 };
                 return (
                   <StyledLink href={`/book/${d.isbn}`}>
@@ -101,6 +103,7 @@ export default class Profile extends React.Component {
                     book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
                   price: book.PRICE && book.PRICE.toFixed(2),
                   num_pages: book.NUM_PAGES,
+                  avg_rating: book.RATING / 2,
                 };
                 return (
                   <StyledLink href={`/book/${d.isbn}`}>
