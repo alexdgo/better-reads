@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import SearchBar from "./SearchBar";
 import SearchResult from "./SearchResult";
-import { logout } from "./LoginForm";
+import { logout } from "./Login";
 import "../style/PageNavbar.css";
 
 export default class PageNavbar extends React.Component {

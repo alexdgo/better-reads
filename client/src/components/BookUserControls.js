@@ -110,7 +110,6 @@ export function BookUserControls({ isbn, small }) {
 						size={small ? 15 : 24}
 						activeColor={'#ff0019'}
 						onChange={addRating}
-						edit={userRating == 0}
 					/>
 				</>
 			)}

@@ -41,8 +41,8 @@ function App() {
             <Route exact path="/home">
               {isLoggedOn() ? <Home /> : <Redirect to="/" />}
             </Route>
-            <Route exact path="/profile">
-              {isLoggedOn() ? <Profile /> : <Redirect to="/" />}
+            <Route exact path="/recommendations">
+              {isLoggedOn() ? <UserRec /> : <Redirect to="/" />}
             </Route>
             <Route exact path="/book/:isbn">
               {isLoggedOn() ? <Book /> : <Redirect to="/" />}
@@ -50,9 +50,7 @@ function App() {
             <Route exact path="/SearchResult">
               {isLoggedOn() ? <SearchResult /> : <Redirect to="/" />}
             </Route>
-            <Route exact path="/recommendations">
-              {isLoggedOn() ? <UserRec /> : <Redirect to="/" />}
-            </Route>
+            <Route path="/">{<div>This isn't a valid page</div>}</Route>
           </Switch>
         </Router>
       </div>

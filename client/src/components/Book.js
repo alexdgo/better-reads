@@ -1,8 +1,16 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import { Container, Row, Col, Media, Button, Card, Carousel } from 'react-bootstrap';
+import {
+	Container,
+	Row,
+	Col,
+	Media,
+	//Button,
+	Card,
+	//Carousel,
+} from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
-import ReactStars from 'react-rating-stars-component';
+//import ReactStars from "react-rating-stars-component";
 import '../style/book.css';
 import { BookIcon } from './BookIcon';
 import { BookRating } from './BookRating';
