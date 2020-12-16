@@ -31,9 +31,9 @@ export default class LoginForm extends React.Component {
   }
 
   async handleModeChange() {
-    if (this.state.mode == "Login") {
+    if (this.state.mode === "Login") {
       this.setState({ mode: "Register" });
-    } else if (this.state.mode == "Register") {
+    } else if (this.state.mode === "Register") {
       this.setState({ mode: "Login" });
     }
     this.setState({
@@ -66,7 +66,7 @@ export default class LoginForm extends React.Component {
   }
 
   async handleSubmit() {
-    if (this.state.mode == "Register") {
+    if (this.state.mode === "Register") {
       if (
         this.state.name &&
         this.state.username &&
@@ -137,9 +137,19 @@ export default class LoginForm extends React.Component {
               alert("Incorrect login info.");
             } else {
               alert("Logged!");
-              window.sessionStorage.setItem("user_id", JSON.stringify(res.user_id));
-              window.sessionStorage.setItem("username", JSON.stringify(res.username));
-              window.sessionStorage.setItem("location", JSON.stringify(res.location));
+              console.log(res);
+              window.sessionStorage.setItem(
+                "user_id",
+                JSON.stringify(res.user_id)
+              );
+              window.sessionStorage.setItem(
+                "username",
+                JSON.stringify(res.username)
+              );
+              window.sessionStorage.setItem(
+                "location",
+                JSON.stringify(res.location)
+              );
               window.sessionStorage.setItem("age", JSON.stringify(res.age));
               window.location.assign("/profile");
             }
@@ -153,7 +163,7 @@ export default class LoginForm extends React.Component {
 
   render() {
     var modeText =
-      this.state.mode == "Login"
+      this.state.mode === "Login"
         ? "Don't have an account? Register here."
         : "Already have an account? Login here.";
     return (
@@ -162,7 +172,7 @@ export default class LoginForm extends React.Component {
           <h2 className="LoginForm-title">{this.state.mode}</h2>
           <br></br>
           <form>
-            {this.state.mode == "Register" && (
+            {this.state.mode === "Register" && (
               <input
                 id="LoginForm-input"
                 className="LoginForm-elt"
@@ -173,7 +183,7 @@ export default class LoginForm extends React.Component {
                 onChange={this.handleNameChange}
               />
             )}
-            {this.state.mode == "Register" && <br></br>}
+            {this.state.mode === "Register" && <br></br>}
             <input
               id="LoginForm-input"
               className="LoginForm-elt"
@@ -194,7 +204,7 @@ export default class LoginForm extends React.Component {
               onChange={this.handlePasswordChange}
             />
             <br></br>
-            {this.state.mode == "Register" && (
+            {this.state.mode === "Register" && (
               <input
                 id="LoginForm-input"
                 className="LoginForm-elt"
@@ -205,8 +215,8 @@ export default class LoginForm extends React.Component {
                 onChange={this.handleLocationChange}
               />
             )}
-            {this.state.mode == "Register" && <br></br>}
-            {this.state.mode == "Register" && (
+            {this.state.mode === "Register" && <br></br>}
+            {this.state.mode === "Register" && (
               <input
                 id="LoginForm-input"
                 className="LoginForm-elt"
@@ -217,7 +227,7 @@ export default class LoginForm extends React.Component {
                 onChange={this.handleAgeChange}
               />
             )}
-            {this.state.mode == "Register" && <br></br>}
+            {this.state.mode === "Register" && <br></br>}
           </form>
           <button
             id="LoginForm-button"
@@ -243,7 +253,7 @@ export default class LoginForm extends React.Component {
 }
 
 export function redirectLogin() {
-  if (window.sessionStorage.getItem("username") == null) {
+  if (window.sessionStorage.getItem("username") === null) {
     window.location.assign("/");
   }
 }

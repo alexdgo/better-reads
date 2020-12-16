@@ -1,11 +1,11 @@
 const oracledb = require("oracledb");
-const generateConnectionProps = require("./oracleinit")
+const generateConnectionProps = require("./oracleinit");
 
 oracledb.outFormat = oracledb.OBJECT;
 oracledb.autoCommit = true;
 
-async function runQuery(query, callback) {
-//   if (_debugMode) console.log(`oracledb running query: ${query}`);
+async function runQuery(query, callback, errorHandler) {
+  //   if (_debugMode) console.log(`oracledb running query: ${query}`);
   let connection;
   let result;
   const connectionProps = generateConnectionProps();
@@ -13,18 +13,12 @@ async function runQuery(query, callback) {
   try {
     connection = await oracledb.getConnection(connectionProps);
     result = await connection.execute(query);
+    callback(result);
   } catch (err) {
-    console.error(err);
-    return -1;
+    errorHandler(err);
   } finally {
     if (connection) {
-      try {
-        await connection.close();
-        callback(result);
-      } catch (err) {
-        console.error(err);
-        return -1;
-      }
+      await connection.close();
     }
   }
 }
@@ -39,12 +33,18 @@ const searchAll = (req, res) => {
     WHERE Book.title LIKE '%${req.params.query}%' OR Book.author LIKE '%${req.params.query}%'
     ORDER BY Rate.avg_rating DESC`;
 
-  runQuery(query, result => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  })
+  );
 
   // res.json([
   //   {
@@ -83,13 +83,19 @@ const searchBooks = (req, res) => {
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
     WHERE Book.title LIKE '${req.params.query}'
     ORDER BY Rate.avg_rating DESC`;
-  
-  runQuery(query, result => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  })
+  );
   // connection.query(query, (err, rows, fields) => {
   //   if (err) console.log(err);
   //   else {
@@ -104,12 +110,18 @@ const searchAuthors = (req, res) => {
     WHERE Book.author LIKE ${req.params.query}
     ORDER BY Rate.avg_rating DESC`;
 
-  runQuery(query, result => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  })
+  );
   // connection.query(query, (err, rows, fields) => {
   //   if (err) console.log(err);
   //   else {
@@ -124,13 +136,19 @@ function getBook(req, res) {
     FROM Book
     WHERE isbn = ${isbn}
   `;
-  runQuery(query, (result) => {
-    if (result.rows.length == 0) {
-      res.json({})
-    } else {
-      res.json(result.rows[0]);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows.length == 0) {
+        res.json({});
+      } else {
+        res.json(result.rows[0]);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  })
+  );
 }
 
 function getAuthorRec(req, res) {
@@ -144,10 +162,15 @@ function getAuthorRec(req, res) {
     ORDER BY Rate.avg_rating DESC
   `;
 
-  runQuery(query, result => {
-    res.json(result.rows);
-  })
-
+  runQuery(
+    query,
+    (result) => {
+      res.json(result.rows);
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function getGenreRec(req, res) {
@@ -160,13 +183,18 @@ function getGenreRec(req, res) {
     ORDER BY Rate.avg_rating DESC
   `;
 
-  runQuery(query, result => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  })
-
+  );
 }
 
 // fix error handling
@@ -178,14 +206,20 @@ function addToReadingList(req, res) {
     VALUES (${isbn}, ${user})
   `;
 
-  runQuery(query, result => {
-    console.log(result)
-  })
+  runQuery(
+    query,
+    (result) => {
+      console.log(result);
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function addRating(req, res) {
   const isbn = req.body.isbn;
-  const user = req.body.user; 
+  const user = req.body.user;
   const rating = req.body.rating;
 
   console.log("addr: ", user);
@@ -195,9 +229,15 @@ function addRating(req, res) {
     VALUES (${isbn}, ${user}, ${rating})
   `;
 
-  runQuery(query, result => {
-    console.log("rating: ", result)
-  });
+  runQuery(
+    query,
+    (result) => {
+      console.log(result);
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function getAvgRating(req, res) {
@@ -209,12 +249,17 @@ function getAvgRating(req, res) {
     HAVING isbn = ${isbn}
   `;
 
-  runQuery(query, result => {
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-
-  })
+  );
 }
 
 function getUserRating(req, res) {
@@ -227,32 +272,33 @@ function getUserRating(req, res) {
     WHERE isbn = ${isbn} AND user_id = ${user}
   `;
 
-  runQuery(query, result => {
-    if (result) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  })
+  );
 }
 function getAllGenres(req, res) {
-  res.json([
-    { genre: "comedy" },
-    { genre: "fiction" },
-    { genre: "horror" },
-    { genre: "mystery" },
-    { genre: "biography" },
-    { genre: "thriller" },
-    { genre: "historical" },
-    { genre: "nonfiction" },
-    { genre: "short story" },
-    { genre: "novel" },
-  ]);
+  const query = `
+    WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
+    SELECT DISTINCT BOOK.genre 
+    FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+  `;
+
+  runQuery(query, result => {
+    console.log(result.rows);
+    res.json(result.rows);
+  })
 }
 // Create new user
 async function addUser(req, res) {
-  let connection;
-  let result;
-  const connectionProps = generateConnectionProps();
   const name = req.body.name;
   const username = req.body.username;
   const password = req.body.password;
@@ -262,71 +308,56 @@ async function addUser(req, res) {
   if (user_id >= 1 && user_id <= 62000) {
     res.json({ status: "false" });
   } else {
-    try {
-      connection = await oracledb.getConnection(connectionProps);
-      result = await connection.execute(
-        `INSERT INTO Reader (user_id, location, age, username, password) VALUES ('${user_id}', '${location}', ${age}, '${username}', '${password}')`
-      );
-      console.log(result);
-      res.json({
-        status: "true",
-        user_id: user_id,
-        name: name,
-        username: username,
-        password: password,
-        location: location,
-        age: age,
-      });
-    } catch (err) {
-      console.error(err);
-      res.json({ status: "false" });
-    } finally {
-      if (connection) {
-        try {
-          await connection.close();
-        } catch (err) {
-          console.error(err);
-          return -1;
-        }
+    const query = `INSERT INTO Reader (user_id, location, age, username, password) VALUES ('${user_id}', '${location}', ${age}, '${username}', '${password}')`;
+    runQuery(
+      query,
+      (result) => {
+        //console.log(result);
+        res.json({
+          status: "true",
+          user_id: user_id,
+          name: name,
+          username: username,
+          password: password,
+          location: location,
+          age: age,
+        });
+      },
+      (error) => {
+        console.error(error);
+        res.json({ status: "false" });
       }
-    }
+    );
   }
 }
 
 // Log user
 async function getUser(req, res) {
-  let connection;
-  let result;
-  const connectionProps = generateConnectionProps();
   const username = req.body.username;
   const password = req.body.password;
-  try {
-    connection = await oracledb.getConnection(connectionProps);
-    result = await connection.execute(
-      `SELECT * FROM Reader WHERE username = '${username}'`
-    );
-    console.log(result);
-    res.json({
-      status: "true",
-      user_id: result.metaData[0],
-      username: result.metaData[3],
-      password: result.metaData[4],
-      location: result.metaData[1],
-      age: result.metaData[2],
-    });
-  } catch (err) {
-    console.error(err);
-    res.json({ status: "false" });
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
-        return -1;
+  const query = `SELECT * FROM Reader WHERE username = '${username}'`;
+  runQuery(
+    query,
+    (result) => {
+      //console.log(result.rows);
+      if (result.rows[0].PASSWORD === password) {
+        res.json({
+          status: "true",
+          user_id: result.rows[0].USER_ID,
+          username: result.rows[0].LOCATION,
+          password: result.rows[0].USERNAME,
+          location: result.rows[0].PASSWORD,
+          age: result.rows[0].AGE,
+        });
+      } else {
+        res.json({ status: "false" });
       }
+    },
+    (error) => {
+      console.error(error);
+      res.json({ status: "false" });
     }
-  }
+  );
 }
 
 // Get user's book
@@ -348,35 +379,55 @@ function getUserBooks(req, res) {
   });
 }
 function getTopInGenre(req, res) {
-  res.json([
-    {
-      isbn: 9780345453747,
-      title: "Thinking, Fast and Slow",
-      author: "Douglas Adams",
-      language: "eng",
-      num_pages: 815,
-      publisher: "Del Rey Books",
-      year_published: 2002,
-      cover:
-        "https://images-na.ssl-images-amazon.com/images/I/41wI53OEpCL._SX332_BO1,204,203,200_.jpg",
-      format: "Paperback",
-      genre: "Science-Fiction-Fantasy-Horror",
-      price: 16.82,
-    },
-    {
-      isbn: 9780345453747,
-      title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-      author: "Douglas Adams",
-      language: "eng",
-      num_pages: 815,
-      publisher: "Del Rey Books",
-      year_published: 2002,
-      cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-      format: "Paperback",
-      genre: "Science-Fiction-Fantasy-Horror",
-      price: 16.82,
-    },
-  ]);
+  const genre = req.params.genre;
+  console.log(genre);
+  const query = `
+  WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn),
+  b AS (SELECT Book.*, Rate.avg_rating  
+      FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+      WHERE Book.genre = '${genre}'
+      ORDER BY Rate.avg_rating DESC
+     )
+      SELECT *
+      FROM b
+      WHERE rownum <= 10
+  `;
+
+  runQuery(query, result => {
+    if (result.rows) {
+      console.log(result.rows);
+      res.json(result.rows);
+    }
+  })
+  // res.json([
+  //   {
+  //     isbn: 9780345453747,
+  //     title: "Thinking, Fast and Slow",
+  //     author: "Douglas Adams",
+  //     language: "eng",
+  //     num_pages: 815,
+  //     publisher: "Del Rey Books",
+  //     year_published: 2002,
+  //     cover:
+  //       "https://images-na.ssl-images-amazon.com/images/I/41wI53OEpCL._SX332_BO1,204,203,200_.jpg",
+  //     format: "Paperback",
+  //     genre: "Science-Fiction-Fantasy-Horror",
+  //     price: 16.82,
+  //   },
+  //   {
+  //     isbn: 9780345453747,
+  //     title: "The Ultimate Hitchhiker's Guide to the Galaxy",
+  //     author: "Douglas Adams",
+  //     language: "eng",
+  //     num_pages: 815,
+  //     publisher: "Del Rey Books",
+  //     year_published: 2002,
+  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
+  //     format: "Paperback",
+  //     genre: "Science-Fiction-Fantasy-Horror",
+  //     price: 16.82,
+  //   },
+  // ]);
 }
 
 function getLocationRec(req, res) {
