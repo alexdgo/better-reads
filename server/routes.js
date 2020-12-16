@@ -45,43 +45,13 @@ const searchAll = (req, res) => {
       console.error(error);
     }
   );
-
-  // res.json([
-  //   {
-  //     isbn: 9780345453747,
-  //     title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-  //     author: "Douglas Adams",
-  //     language: "eng",
-  //     num_pages: 815,
-  //     publisher: "Del Rey Books",
-  //     year_published: 2002,
-  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-  //     format: "Paperback",
-  //     genre: "Science-Fiction-Fantasy-Horror",
-  //     price: 16.82,
-  //     avg_rating: 5,
-  //   },
-  //   {
-  //     isbn: 123,
-  //     title: "test",
-  //     author: "Alex",
-  //     language: "eng",
-  //     num_pages: 2,
-  //     publisher: "Del Rey Books",
-  //     year_published: 2000,
-  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-  //     format: "Paperback",
-  //     genre: "Science-Fiction-Fantasy-Horror",
-  //     price: 42,
-  //     avg_rating: 2.5,
-  //   },
-  // ]);
 };
+
 const searchBooks = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.*, Rate.avg_rating
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-    WHERE Book.title LIKE '${req.params.query}'
+    WHERE Book.title LIKE '%${req.params.query}%'
     ORDER BY Rate.avg_rating DESC`;
 
   runQuery(
@@ -96,18 +66,13 @@ const searchBooks = (req, res) => {
       console.error(error);
     }
   );
-  // connection.query(query, (err, rows, fields) => {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
 };
+
 const searchAuthors = (req, res) => {
   var query = `WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
     SELECT Book.*, Rate.avg_rating
     FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-    WHERE Book.author LIKE ${req.params.query}
+    WHERE Book.author LIKE '%${req.params.query}%'
     ORDER BY Rate.avg_rating DESC`;
 
   runQuery(
@@ -122,13 +87,8 @@ const searchAuthors = (req, res) => {
       console.error(error);
     }
   );
-  // connection.query(query, (err, rows, fields) => {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
 };
+
 function getBook(req, res) {
   const isbn = req.params.isbn;
   const query = `
@@ -221,11 +181,9 @@ function addToReadingList(req, res) {
 function addRating(req, res) {
   const isbn = req.body.isbn;
   const user = req.body.user;
-  const rating = req.body.rating;
+  const rating = req.body.rating * 2;
 
-  console.log("addr: ", user);
-
-  const query = `
+  let query = `
     INSERT INTO Ratings(isbn, user_id, rating)
     VALUES (${isbn}, ${user}, ${rating})
   `;
@@ -236,7 +194,19 @@ function addRating(req, res) {
       console.log(result);
     },
     (error) => {
-      console.error(error);
+      let query2 = `
+        UPDATE Ratings
+        SET rating = ${rating}
+        WHERE isbn = ${isbn} AND user_id = ${user}
+      `;
+      console.log('error from ratings insert:', error)
+      runQuery(query2, result => {
+        console.log('succes:')
+        console.log(result)
+      }, error => {
+        console.log('error:')
+        console.log(error)
+      })
     }
   );
 }
@@ -368,7 +338,17 @@ function getUserBooks(req, res) {
   FROM Book LEFT JOIN ReadingList ON Book.isbn = ReadingList.isbn
   WHERE user_id = ${userid}`
   runQuery(query, result => {
-    console.log(result.rows);
+    res.json(result.rows);
+  })
+}
+
+function getUserRated(req, res) {
+  const userid = req.body.userid;
+  const query = `SELECT Book.*, Ratings.rating
+  FROM Book LEFT JOIN Ratings ON Book.isbn = Ratings.isbn
+  WHERE user_id = ${userid}`
+  runQuery(query, result => {
+    console.log(result.row);
     res.json(result.rows);
   })
 }
@@ -394,35 +374,6 @@ function getTopInGenre(req, res) {
       res.json(result.rows);
     }
   })
-  // res.json([
-  //   {
-  //     isbn: 9780345453747,
-  //     title: "Thinking, Fast and Slow",
-  //     author: "Douglas Adams",
-  //     language: "eng",
-  //     num_pages: 815,
-  //     publisher: "Del Rey Books",
-  //     year_published: 2002,
-  //     cover:
-  //       "https://images-na.ssl-images-amazon.com/images/I/41wI53OEpCL._SX332_BO1,204,203,200_.jpg",
-  //     format: "Paperback",
-  //     genre: "Science-Fiction-Fantasy-Horror",
-  //     price: 16.82,
-  //   },
-  //   {
-  //     isbn: 9780345453747,
-  //     title: "The Ultimate Hitchhiker's Guide to the Galaxy",
-  //     author: "Douglas Adams",
-  //     language: "eng",
-  //     num_pages: 815,
-  //     publisher: "Del Rey Books",
-  //     year_published: 2002,
-  //     cover: "http://images.amazon.com/images/P/0345453743.01.LZZZZZZZ.jpg",
-  //     format: "Paperback",
-  //     genre: "Science-Fiction-Fantasy-Horror",
-  //     price: 16.82,
-  //   },
-  // ]);
 }
 
 function getLocationRec(req, res) {
@@ -464,6 +415,7 @@ module.exports = {
   addUser: addUser,
   getUser: getUser,
   getUserBooks: getUserBooks,
+  getUserRated: getUserRated,
   searchAll: searchAll,
   searchBooks: searchBooks,
   searchAuthors: searchAuthors,

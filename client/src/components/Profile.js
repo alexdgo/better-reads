@@ -1,13 +1,16 @@
 import React from "react";
 import PageNavBar from './PageNavbar'
-import { Wrapper } from '../style/shared'
-import { BookCard } from '../style/SearchStyle'
+import { Wrapper, StyledLink } from '../style/shared'
+import { BookCard } from '../style/ProfileStyle'
+import placeholder from '../files/placeholder.png';
+import { Row, Col } from 'react-bootstrap'
 
 export default class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      readBooks: [],
+      toReadBooks: [],
+      hasReadBooks: []
     };
   }
 
@@ -29,7 +32,19 @@ export default class Profile extends React.Component {
           if (res.status === "false") {
             alert("error");
           } else {
-            this.setState({ readBooks: res });
+            this.setState({ toReadBooks: res });
+          }
+        });
+      }
+    );
+    fetch("http://localhost:8081/userRated/", requestOptions).then(
+      async (resx) => {
+        resx.json().then(async (res) => {
+          console.log(res);
+          if (res.status === "false") {
+            alert("error");
+          } else {
+            this.setState({ hasReadBooks: res });
           }
         });
       }
@@ -41,11 +56,50 @@ export default class Profile extends React.Component {
       <>
       <PageNavBar/>
       <Wrapper>
-        <h2>My book</h2>
-        {console.log(this.state.readBooks)}
-        {this.state.readBooks.map(b => (
-          <BookCard {...b}/>
-        ))}
+        <Row>
+          <Col>
+            <h2>Reading List</h2>
+            {this.state.toReadBooks.map(book => {
+              const d = {
+                isbn: book.ISBN, 
+                title: book.TITLE, 
+                author: book.AUTHOR,
+                genre: book.GENRE,
+                language: book.LANGUAGE,
+                cover: book.COVER || placeholder, 
+                publisher: book.PUBLISHER,
+                year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                price: book.PRICE && book.PRICE.toFixed(2),
+                num_pages: book.NUM_PAGES,
+              }
+              return (
+                <StyledLink href={`/book/${d.isbn}`}>
+                  <BookCard {...d}/>
+                </StyledLink>
+            )})}
+          </Col>
+          <Col>
+              <h2>Liked</h2>
+              {this.state.hasReadBooks.map(book => {
+              const d = {
+                isbn: book.ISBN, 
+                title: book.TITLE, 
+                author: book.AUTHOR,
+                genre: book.GENRE,
+                language: book.LANGUAGE,
+                cover: book.COVER || placeholder, 
+                publisher: book.PUBLISHER,
+                year_published: book.YEAR_PUBLISHED && parseInt(book.YEAR_PUBLISHED),
+                price: book.PRICE && book.PRICE.toFixed(2),
+                num_pages: book.NUM_PAGES,
+              }
+              return (
+                <StyledLink href={`/book/${d.isbn}`}>
+                  <BookCard {...d}/>
+                </StyledLink>
+            )})}
+          </Col>
+        </Row>
       </Wrapper>
       </>
     );

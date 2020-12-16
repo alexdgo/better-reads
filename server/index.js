@@ -34,6 +34,7 @@ app.post("/userRegister", routes.addUser);
 app.post("/userLogin", routes.getUser);
 
 app.post("/userBooks", routes.getUserBooks);
+app.post("/userRated", routes.getUserRated);
 
 app.listen(8081, () => {
   console.log(`Server listening on PORT 8081`);

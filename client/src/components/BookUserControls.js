@@ -26,12 +26,15 @@ export function BookUserControls({isbn, small}) {
 
     function addRating(rating) {
         const data = { isbn: isbn, rating: rating, user: user}
-        console.log("user in add: ", user);
         fetch(`http://localhost:8081/addRating`, {
             method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
             body: JSON.stringify(data),
         })
-        .then(data => {
+        .then(async (data) => {
             console.log(data);
             alert("Added rating!");
             this.setState({userRating: data.rating});
