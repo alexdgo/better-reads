@@ -11,7 +11,7 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   height: 100%;
-  background-image: linear-gradient(to right, #f8a73f, #db5c01);
+  background-image: linear-gradient(to right, #2af598, #08b3e5);
 }
 
 .LoginPage {
@@ -40,7 +40,7 @@ body {
   margin-bottom: 1rem;
 }
 #LoginForm-button {
-  background: #cbb796;
+  background: #14c9cb;
   border: 1px solid #ddd;
   color: #ffffff;
   padding: 10px;
