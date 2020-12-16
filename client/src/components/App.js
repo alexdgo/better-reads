@@ -10,6 +10,7 @@ import SearchResult from "./SearchResult";
 import Home from "./Home";
 import Login from "./Login";
 import Profile from "./Profile";
+import UserRec from "./UserRec";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export const BookContext = createContext();
@@ -49,7 +50,9 @@ function App() {
             <Route exact path="/SearchResult">
               {isLoggedOn() ? <SearchResult /> : <Redirect to="/" />}
             </Route>
-            <Route path="/">{<div>This isn't a valid page</div>}</Route>
+            <Route exact path="/recommendations">
+              {isLoggedOn() ? <UserRec /> : <Redirect to="/" />}
+            </Route>
           </Switch>
         </Router>
       </div>

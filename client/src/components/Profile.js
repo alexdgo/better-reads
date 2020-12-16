@@ -22,7 +22,7 @@ export default class Profile extends React.Component {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        userid: window.sessionStorage.getItem("user_id"),
+        userid: window.localStorage.getItem("user_id"),
       }),
     };
     fetch("http://localhost:8081/userBooks/", requestOptions).then(
