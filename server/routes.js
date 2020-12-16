@@ -312,11 +312,15 @@ function getTopInGenre(req, res) {
   const genre = req.params.genre;
   console.log(genre);
   const query = `
-    WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn)
-    SELECT Book.*, Rate.avg_rating  
-    FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
-    WHERE Book.genre = '${genre}'
-    ORDER BY Rate.avg_rating DESC;
+  WITH Rate AS (SELECT isbn, AVG(rating) AS avg_rating FROM Ratings GROUP BY isbn),
+  b AS (SELECT Book.*, Rate.avg_rating  
+      FROM Book LEFT JOIN Rate ON Book.isbn = Rate.isbn
+      WHERE Book.genre = '${genre}'
+      ORDER BY Rate.avg_rating DESC
+     )
+      SELECT *
+      FROM b
+      WHERE rownum <= 10
   `;
 
   runQuery(query, result => {

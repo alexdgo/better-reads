@@ -24,7 +24,7 @@ export default class Dashboard extends React.Component {
 
   // React function that is called when the page load.
   componentDidMount() {
-    redirectLogin();
+    //redirectLogin();
     // Send an HTTP request to the server.
     fetch("http://localhost:8081/genres", {
       method: "GET", // The type of HTTP request.
@@ -36,9 +36,9 @@ export default class Dashboard extends React.Component {
         // A button which triggers the showMovies function for each genre.
         let genreDivs = genreList.map((genreObj, i) => (
           <GenreButton
-            id={"button-" + genreObj.genre}
-            onClick={() => this.showBooks(genreObj.genre)}
-            genre={genreObj.genre}
+            id={"button-" + genreObj.GENRE}
+            onClick={() => this.showBooks(genreObj.GENRE)}
+            genre={genreObj.GENRE}
           />
         ));
         // this.showBooks();
