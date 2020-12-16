@@ -40,3 +40,7 @@
   padding: 6px;
   border: none;
 }
+
+.popover {
+  position: relative;
+}
