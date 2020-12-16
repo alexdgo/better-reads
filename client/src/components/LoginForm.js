@@ -137,10 +137,20 @@ export default class LoginForm extends React.Component {
               alert("Incorrect login info.");
             } else {
               alert("Logged!");
-              window.sessionStorage.setItem("user_id", res.user_id);
-              window.sessionStorage.setItem("username", res.username);
-              window.sessionStorage.setItem("location", res.location);
-              window.sessionStorage.setItem("age", res.age);
+              console.log(res);
+              window.sessionStorage.setItem(
+                "user_id",
+                JSON.stringify(res.user_id)
+              );
+              window.sessionStorage.setItem(
+                "username",
+                JSON.stringify(res.username)
+              );
+              window.sessionStorage.setItem(
+                "location",
+                JSON.stringify(res.location)
+              );
+              window.sessionStorage.setItem("age", JSON.stringify(res.age));
               window.location.assign("/profile");
             }
           });

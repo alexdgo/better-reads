@@ -4,7 +4,7 @@ const generateConnectionProps = require("./oracleinit");
 oracledb.outFormat = oracledb.OBJECT;
 oracledb.autoCommit = true;
 
-async function runQuery(query, callback) {
+async function runQuery(query, callback, errorHandler) {
   //   if (_debugMode) console.log(`oracledb running query: ${query}`);
   let connection;
   let result;
@@ -13,18 +13,12 @@ async function runQuery(query, callback) {
   try {
     connection = await oracledb.getConnection(connectionProps);
     result = await connection.execute(query);
+    callback(result);
   } catch (err) {
-    console.error(err);
-    return -1;
+    errorHandler(err);
   } finally {
     if (connection) {
-      try {
-        await connection.close();
-        callback(result);
-      } catch (err) {
-        console.error(err);
-        return -1;
-      }
+      await connection.close();
     }
   }
 }
@@ -39,12 +33,18 @@ const searchAll = (req, res) => {
     WHERE Book.title LIKE '%${req.params.query}%' OR Book.author LIKE '%${req.params.query}%'
     ORDER BY Rate.avg_rating DESC`;
 
-  runQuery(query, (result) => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
 
   // res.json([
   //   {
@@ -84,12 +84,18 @@ const searchBooks = (req, res) => {
     WHERE Book.title LIKE '${req.params.query}'
     ORDER BY Rate.avg_rating DESC`;
 
-  runQuery(query, (result) => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
   // connection.query(query, (err, rows, fields) => {
   //   if (err) console.log(err);
   //   else {
@@ -104,12 +110,18 @@ const searchAuthors = (req, res) => {
     WHERE Book.author LIKE ${req.params.query}
     ORDER BY Rate.avg_rating DESC`;
 
-  runQuery(query, (result) => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
   // connection.query(query, (err, rows, fields) => {
   //   if (err) console.log(err);
   //   else {
@@ -124,13 +136,19 @@ function getBook(req, res) {
     FROM Book
     WHERE isbn = ${isbn}
   `;
-  runQuery(query, (result) => {
-    if (result.rows.length == 0) {
-      res.json({});
-    } else {
-      res.json(result.rows[0]);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows.length == 0) {
+        res.json({});
+      } else {
+        res.json(result.rows[0]);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
 }
 
 function getAuthorRec(req, res) {
@@ -144,9 +162,15 @@ function getAuthorRec(req, res) {
     ORDER BY Rate.avg_rating DESC
   `;
 
-  runQuery(query, (result) => {
-    res.json(result.rows);
-  });
+  runQuery(
+    query,
+    (result) => {
+      res.json(result.rows);
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function getGenreRec(req, res) {
@@ -159,12 +183,18 @@ function getGenreRec(req, res) {
     ORDER BY Rate.avg_rating DESC
   `;
 
-  runQuery(query, (result) => {
-    if (result.rows) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
 }
 
 // fix error handling
@@ -176,9 +206,15 @@ function addToReadingList(req, res) {
     VALUES (${isbn}, ${user})
   `;
 
-  runQuery(query, (result) => {
-    console.log(result);
-  });
+  runQuery(
+    query,
+    (result) => {
+      console.log(result);
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function addRating(req, res) {
@@ -191,9 +227,15 @@ function addRating(req, res) {
     VALUES (${isbn}, ${user}, ${rating})
   `;
 
-  runQuery(query, (result) => {
-    console.log(result);
-  });
+  runQuery(
+    query,
+    (result) => {
+      console.log(result);
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function getAvgRating(req, res) {
@@ -205,11 +247,17 @@ function getAvgRating(req, res) {
     HAVING isbn = ${isbn}
   `;
 
-  runQuery(query, (result) => {
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]);
+  runQuery(
+    query,
+    (result) => {
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
 }
 
 function getUserRating(req, res) {
@@ -222,12 +270,18 @@ function getUserRating(req, res) {
     WHERE isbn = ${isbn} AND user_id = ${user}
   `;
 
-  runQuery(query, (result) => {
-    if (result) {
-      console.log(result.rows);
-      res.json(result.rows);
+  runQuery(
+    query,
+    (result) => {
+      if (result) {
+        console.log(result.rows);
+        res.json(result.rows);
+      }
+    },
+    (error) => {
+      console.error(error);
     }
-  });
+  );
 }
 function getAllGenres(req, res) {
   res.json([
@@ -255,18 +309,25 @@ async function addUser(req, res) {
     res.json({ status: "false" });
   } else {
     const query = `INSERT INTO Reader (user_id, location, age, username, password) VALUES ('${user_id}', '${location}', ${age}, '${username}', '${password}')`;
-    runQuery(query, (result) => {
-      //console.log(result);
-      res.json({
-        status: "true",
-        user_id: user_id,
-        name: name,
-        username: username,
-        password: password,
-        location: location,
-        age: age,
-      });
-    });
+    runQuery(
+      query,
+      (result) => {
+        //console.log(result);
+        res.json({
+          status: "true",
+          user_id: user_id,
+          name: name,
+          username: username,
+          password: password,
+          location: location,
+          age: age,
+        });
+      },
+      (error) => {
+        console.error(error);
+        res.json({ status: "false" });
+      }
+    );
   }
 }
 
@@ -275,21 +336,28 @@ async function getUser(req, res) {
   const username = req.body.username;
   const password = req.body.password;
   const query = `SELECT * FROM Reader WHERE username = '${username}'`;
-  runQuery(query, (result) => {
-    //console.log(result);
-    if (result.metaData[4] === password) {
-      res.json({
-        status: "true",
-        user_id: result.metaData[0],
-        username: result.metaData[3],
-        password: result.metaData[4],
-        location: result.metaData[1],
-        age: result.metaData[2],
-      });
-    } else {
+  runQuery(
+    query,
+    (result) => {
+      //console.log(result.rows);
+      if (result.rows[0].PASSWORD === password) {
+        res.json({
+          status: "true",
+          user_id: result.rows[0].USER_ID,
+          username: result.rows[0].LOCATION,
+          password: result.rows[0].USERNAME,
+          location: result.rows[0].PASSWORD,
+          age: result.rows[0].AGE,
+        });
+      } else {
+        res.json({ status: "false" });
+      }
+    },
+    (error) => {
+      console.error(error);
       res.json({ status: "false" });
     }
-  });
+  );
 }
 
 // Get user's book
