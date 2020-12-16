@@ -6,7 +6,8 @@ import ReactStars from "react-rating-stars-component";
 
 export function BookUserControls({isbn, small}) {
     let [userRating, setUserRating] = useState();
-    const user = window.sessionStorage.getItem("username") || 1; 
+    const user = (window.sessionStorage.getItem('username')); 
+    // console.log(user);
 
     useEffect(() => {
         fetch(`http://localhost:8081/getUserRating/${isbn}/${user}`, {
@@ -25,6 +26,7 @@ export function BookUserControls({isbn, small}) {
 
     function addRating(rating) {
         const data = { isbn: isbn, rating: rating, user: user}
+        console.log("user in add: ", user);
         fetch(`http://localhost:8081/addRating`, {
             method: 'POST',
             body: JSON.stringify(data),

@@ -11,10 +11,6 @@ import { BookRating } from './BookRating';
 import { BookUserControls } from './BookUserControls';
 import placeholder from '../files/placeholder.png';
 
-
-// TODO: book recs
-// TODO: check if user has previous rating
-
 class Book extends React.Component {
     constructor(props) {
         super(props);

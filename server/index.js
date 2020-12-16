@@ -19,6 +19,8 @@ app.get("/getUserRating/:isbn/:user", routes.getUserRating);
 app.get("/addToList/:isbn/:user", routes.addToReadingList);
 app.get("/authorRec/:isbn", routes.getAuthorRec);
 app.get("/genreRec/:isbn", routes.getGenreRec);
+app.post("/addRating", routes.addRating);
+
 
 app.get("/search/all/:query", routes.searchAll);
 app.get("/search/books/:query", routes.searchBooks);
