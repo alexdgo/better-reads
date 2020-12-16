@@ -202,9 +202,10 @@ function addToReadingList(req, res) {
   var isbn = req.params.isbn;
   var user = req.params.user;
   var query = `
-    INSERT INTO ReadingList(isbn, user_id)
-    VALUES (${isbn}, ${user})
+    INSERT INTO ReadingList(user_id, isbn)
+    VALUES (${user}, ${isbn})
   `;
+  console.log(query)
 
   runQuery(
     query,
@@ -362,22 +363,16 @@ async function getUser(req, res) {
 
 // Get user's book
 function getUserBooks(req, res) {
-  const username = req.body.username;
-  books.set({ username: username, books: Math.random() }, 0);
-  var allBooks = [];
-  for (const [key, value] of books.entries()) {
-    if (key.username === username) {
-      allBooks.push(key.books);
-    }
-  }
-  console.log(allBooks);
-  const info = users.get(username);
-  res.json({
-    status: "true",
-    username: username,
-    books: allBooks,
-  });
+  const userid = req.body.userid;
+  const query = `SELECT Book.*
+  FROM Book LEFT JOIN ReadingList ON Book.isbn = ReadingList.isbn
+  WHERE user_id = ${userid}`
+  runQuery(query, result => {
+    console.log(result.rows);
+    res.json(result.rows);
+  })
 }
+
 function getTopInGenre(req, res) {
   const genre = req.params.genre;
   console.log(genre);
