@@ -7,7 +7,7 @@
 }
 
 .genres-container .genre {
-  flex: 1 0 20%;
+  flex: 0 0 20%;
   margin: 5px 0;
   padding: 10px;
   cursor: pointer;
@@ -18,25 +18,32 @@
   background-color: #ddd;
 }
 
-.movies-container .movies-header, .results-container .movie {
+.movies-container .movies-header,
+.results-container .movie {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   height: 40px;
 }
 
-.movie .title, .movies-header .header-lg {
+.movie .title,
+.movies-header .header-lg {
   flex: 1 0 50%;
 }
 
-.movies-header .header, .movie .rating, .movie .votes {
+.movies-header .header,
+.movie .rating,
+.movie .votes {
   flex: 1 0 25%;
 }
 
-
 /* Style the search box inside the navigation bar */
-.input-container input[type=text] {
+.input-container input[type="text"] {
   float: right;
   padding: 6px;
   border: none;
+}
+
+.popover {
+  position: relative;
 }

@@ -14,8 +14,8 @@ function generateConnectionProps() {
   return {
     user: "admin",
     password: "welovesusan",
-    connectString: connectString
-  }
+    connectString: connectString,
+  };
 }
 
 module.exports = generateConnectionProps;

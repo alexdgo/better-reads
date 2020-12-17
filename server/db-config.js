@@ -4,5 +4,5 @@ module.exports = {
   port: "1521",
   user: "admin",
   password: "welovesusan",
-  database: "BOOKSDB"
+  database: "BOOKSDB",
 };

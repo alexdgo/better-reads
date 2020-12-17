@@ -50,7 +50,13 @@ function App() {
             <Route exact path="/SearchResult">
               {isLoggedOn() ? <SearchResult /> : <Redirect to="/" />}
             </Route>
-            <Route path="/">{<div>This isn't a valid page</div>}</Route>
+            <Route path="/">
+              {
+                <div>
+                  <h1>This isn't a valid page</h1>
+                </div>
+              }
+            </Route>
           </Switch>
         </Router>
       </div>
