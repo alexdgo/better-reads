@@ -43,7 +43,7 @@ export default class PageNavbar extends React.Component {
 	render() {
 		return (
 			<>
-				<div className="PageNavbar p-2">
+				<div className="PageNavbar p-1">
 					<nav className="navbar navbar-expand-lg justify-content-center align-items-center">
 						<h2 className="navbar-brand center">Better Reads</h2>
 						<div className="collapse navbar-collapse" id="navbarNavAltMarkup">

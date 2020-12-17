@@ -32,7 +32,7 @@ body {
 }
 
 #status {
-  color: red;
+	color: red;
 }
 
 #LoginForm-input {
@@ -45,19 +45,11 @@ body {
 	margin-bottom: 1rem;
 }
 #LoginForm-button {
-<<<<<<< HEAD
-	background: #cbb796;
+	background: #14c9cb;
 	border: 1px solid #ddd;
 	color: #ffffff;
 	padding: 10px;
 	width: 100%;
-=======
-  background: #14c9cb;
-  border: 1px solid #ddd;
-  color: #ffffff;
-  padding: 10px;
-  width: 100%;
->>>>>>> 3d32144961766f415cb594fee6c864ae619d737d
 }
 .form-button:hover {
 	background: #69c8e7;
