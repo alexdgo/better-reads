@@ -1,58 +1,58 @@
 /* source: https://metabust.com/blog/create-a-simple-responsive-login-form-with-html-and-css/ */
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-  font-family: "Segoe UI", sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  height: 100%;
-  background-image: linear-gradient(to right, #f8a73f, #db5c01);
+	font-family: 'Segoe UI', sans-serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	height: 100%;
+	/* background-image: linear-gradient(to right, #f8a73f, #db5c01); */
 }
 
 .LoginPage {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .LoginForm {
-  width: 350px;
-  margin: 60px;
-  border: 1px solid #ddd;
-  padding: 2rem;
-  background: #ffffff;
-  box-shadow: 1px 1px 10px #888888;
+	width: 350px;
+	margin: 60px;
+	border: 1px solid #ddd;
+	padding: 2rem;
+	background: #ffffff;
+	box-shadow: 1px 1px 10px #888888;
 }
 #LoginForm-input {
-  background: #fafafa;
-  border: 1px solid #eeeeee;
-  padding: 12px;
-  width: 100%;
+	background: #fafafa;
+	border: 1px solid #eeeeee;
+	padding: 12px;
+	width: 100%;
 }
 .LoginForm-elt {
-  margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 #LoginForm-button {
-  background: #cbb796;
-  border: 1px solid #ddd;
-  color: #ffffff;
-  padding: 10px;
-  width: 100%;
+	background: #cbb796;
+	border: 1px solid #ddd;
+	color: #ffffff;
+	padding: 10px;
+	width: 100%;
 }
 .form-button:hover {
-  background: #69c8e7;
+	background: #69c8e7;
 }
 .form-header {
-  text-align: center;
-  margin-bottom: 2rem;
+	text-align: center;
+	margin-bottom: 2rem;
 }
 .form-footer {
-  text-align: center;
+	text-align: center;
 }

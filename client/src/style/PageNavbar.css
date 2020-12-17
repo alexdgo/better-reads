@@ -1,10 +1,33 @@
-#logoutButton {
-  color: white;
-  padding: 5px;
-  border-radius: 100px;
-  background-color: rgb(226, 38, 38);
-}
+/* #logoutButton {
+	color: white;
+	padding: 5px;
+	border-radius: 100px;
+	background-color: rgb(226, 38, 38);
+} */
 
 .PageNavbar {
-  background-color: #cbb796;
+	background-color: #a9b9ce;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.navbar-brand {
+	font-family: 'Playfair Display', serif;
+	font-weight: 700;
+	font-size: x-large;
+	color: white;
+}
+
+.nav-item {
+	font-size: large;
+	font-weight: 500;
+	font-family: 'Montserrat', sans-serif;
+	color: white;
+}
+.nav-item:hover {
+	color: black;
+}
+
+a {
+	color: black;
 }

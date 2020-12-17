@@ -21,3 +21,7 @@ html {
 .userInfo {
 	width: fit-content;
 }
+
+body {
+	background-color: #e0dfdb23;
+}
