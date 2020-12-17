@@ -59,10 +59,10 @@ export const BookCard = ({ title, cover, author, avg_rating }) => (
 			<Media.Body>
 				<h2 className="title">{title}</h2>
 				<h4>by {author}</h4>
-				{<ReactStars count={5} value={avg_rating} isHalf={true} size={24} />}
-				<Button className="btn-sm" variant="outline-primary" onClick={() => {}}>
+				{/* {<ReactStars count={5} value={avg_rating} isHalf={true} size={24} />} */}
+				{/* <Button className="btn-sm" variant="outline-primary" onClick={() => {}}>
 					+
-				</Button>
+				</Button> */}
 			</Media.Body>
 		</Media>
 	</CardWrapper>
